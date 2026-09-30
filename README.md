@@ -1,5 +1,7 @@
 # Sunsynk Power Flow Card
 
+> **Fork:** [Bascht74/sunsynk-power-flow-card](https://github.com/Bascht74/sunsynk-power-flow-card) adds a third battery on top of [slipx06/sunsynk-power-flow-card](https://github.com/slipx06/sunsynk-power-flow-card) v7.3.3. Set `wide: true` and `battery.count: 3`, then map `battery3_*` the same way as `battery2_*`. Do not load this fork and the upstream card at the same time; both register `custom:sunsynk-power-flow-card`.
+
 An animated Home Assistant card to emulate the power flow that's shown on the Sunsynk Inverter screen. You can use this to display data from many inverters e.g. Sunsynk, Deye, Solis, Lux, FoxESS, Goodwe, Huawei etc as long as you have the required sensor data. See the [wiki](https://github.com/slipx06/sunsynk-power-flow-card/wiki) for integration methods and examples.
 
 [![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=slipx06&repository=sunsynk-power-flow-card&category=plugin)

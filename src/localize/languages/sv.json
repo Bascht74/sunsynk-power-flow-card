@@ -227,7 +227,8 @@
       "gri": "Nätentiteter",
       "sensor": "Valfria Sensorer",
       "bat1": "Battery 1",
-      "bat2": "Battery 2"
+      "bat2": "Battery 2",
+      "bat3": "Battery 3"
     }
   }
 }

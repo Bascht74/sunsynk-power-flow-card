@@ -131,6 +131,29 @@ export interface sunsynkPowerFlowCardConfig extends LovelaceCardConfig {
 		invert_flow: boolean;
 		soc_decimal_places?: number;
 	};
+	battery3: {
+		energy: any;
+		shutdown_soc: any;
+		shutdown_soc_offgrid: any;
+		soc_end_of_charge: any;
+		hide_soc: boolean;
+		invert_power: boolean;
+		colour: string;
+		charge_colour: string;
+		full_capacity: number;
+		empty_capacity: number;
+		show_absolute: boolean;
+		auto_scale: boolean;
+		show_remaining_energy: boolean;
+		remaining_energy_to_shutdown: boolean;
+		dynamic_colour: boolean;
+		linear_gradient: boolean;
+		animate: boolean;
+		path_threshold: number;
+		navigate: string;
+		invert_flow: boolean;
+		soc_decimal_places?: number;
+	};
 	solar: {
 		colour: string;
 		show_daily: boolean;
@@ -275,6 +298,13 @@ export interface CardConfigEntities {
 	battery2_current_191: string;
 	battery2_rated_capacity: string;
 	battery2_soh: string;
+	battery3_voltage_183: string;
+	battery3_soc_184: string;
+	battery3_power_190: string;
+	battery3_current_191: string;
+	battery3_rated_capacity: string;
+	battery3_soh: string;
+	battery3_current_direction: string;
 	grid_power_169: string;
 	grid_voltage: string;
 	day_grid_import_76: string;
@@ -307,6 +337,7 @@ export interface CardConfigEntities {
 	remaining_solar: string;
 	battery_temp_182: string;
 	battery2_temp_182: string;
+	battery3_temp_182: string;
 	dc_transformer_temp_90: string;
 	environment_temp: string;
 	radiator_temp_91: string;
@@ -326,6 +357,7 @@ export interface CardConfigEntities {
 	solar_sell_247: string;
 	battery_status: string;
 	battery2_status: string;
+	battery3_status: string;
 	aux_load1_extra: string;
 	aux_load2_extra: string;
 	pv_total: string;
@@ -618,5 +650,26 @@ export interface DataDto {
 	customGridIcon;
 	customGridIconColour;
 	maximumSOC;
+	battery3Colour;
+	isFloating3;
+	battery3Energy;
+	battery3Power;
+	batteryDuration3;
+	battery3Capacity;
+	battery3StateMsg;
+	batteryShutdown3;
+	shutdownOffGrid3;
+	batteryThreeShutdown;
+	battery3Voltage;
+	battery30;
+	battery3StateColour;
+	battery3Charge;
+	battery3Icon;
+	formattedResultTime3;
+	stateBattery3Soc: CustomEntity;
+	stateBattery3Current: CustomEntity;
+	stateBattery3Temp: CustomEntity;
+	stateBattery3SOH: CustomEntity;
+	stop3Colour;
 	batteryCount;
 }

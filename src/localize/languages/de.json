@@ -227,7 +227,8 @@
       "gri": "Grid Entities",
       "sensor": "Optional Sensors",
       "bat1": "Battery 1",
-      "bat2": "Battery 2"
+      "bat2": "Battery 2",
+      "bat3": "Batterie 3"
     }
   }
 }

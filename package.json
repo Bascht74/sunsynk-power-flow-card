@@ -1,6 +1,6 @@
 {
   "name": "sunsynk-power-flow-card",
-  "version": "7.3.3",
+  "version": "7.4.0",
   "description": "A customizable Home Assistant card to emulate the Sunsynk System flow that's displayed on the Inverter screen.",
   "main": "sunsynk-power-flow-card.js",
   "prettier": {
@@ -17,21 +17,21 @@
     "format": "prettier . --write",
     "format:check": "prettier . --check",
     "rollup": "rollup -c",
-    "build": "rollup -c --bundleConfigAsCjs",
+    "build": "esbuild src/index.ts --bundle --format=esm --target=es2020 --minify --legal-comments=none --outfile=dist/sunsynk-power-flow-card.js",
     "watch": "rollup -c --watch",
     "docs-build": "sphinx-autobuild docs docs/_build/html",
     "prepare": "husky"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/slipx06/sunsynk-power-flow-card.git"
+    "url": "git+https://github.com/Bascht74/sunsynk-power-flow-card.git"
   },
   "author": "slipx06 <slipx06@users.noreply.github.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/slipx06/sunsynk-power-flow-card/issues"
+    "url": "https://github.com/Bascht74/sunsynk-power-flow-card/issues"
   },
-  "homepage": "https://github.com/slipx06/sunsynk-power-flow-card#readme",
+  "homepage": "https://github.com/Bascht74/sunsynk-power-flow-card#readme",
   "dependencies": {
     "@lit-labs/scoped-registry-mixin": "^1.0.3",
     "custom-card-helpers": "^1.9.0",
@@ -56,6 +56,7 @@
     "@typescript-eslint/eslint-plugin": "^8.1.0",
     "@typescript-eslint/parser": "^8.2.0",
     "babel-preset-minify": "^0.5.2",
+    "esbuild": "^0.25.12",
     "eslint": "^10.0.0",
     "eslint-config-prettier": "^10.0.1",
     "eslint-plugin-prettier": "^5.5.4",

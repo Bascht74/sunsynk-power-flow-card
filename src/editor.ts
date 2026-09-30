@@ -86,7 +86,8 @@ export class SunSynkCardEditor
 		custom_label: 'Custom label shown in the UI.',
 		label_daily_grid_buy: 'Label for daily grid buy.',
 		label_daily_grid_sell: 'Label for daily grid sell.',
-		count: 'Number of batteries to display.',
+		count:
+			'Number of batteries to display (1-3). Two or three batteries require wide mode.',
 		energy: 'Total available energy of the battery in Wh.',
 		shutdown_soc: 'State of charge below which the battery is considered off.',
 		shutdown_soc_offgrid:
@@ -475,6 +476,10 @@ export class SunSynkCardEditor
 			c.battery2 as Record<string, unknown>,
 			['colour', 'charge_colour'],
 		);
+		copy.battery3 = this._convertSectionColours(
+			c.battery3 as Record<string, unknown>,
+			['colour', 'charge_colour'],
+		);
 		copy.load = this._convertSectionColours(c.load as Record<string, unknown>, [
 			'colour',
 			'off_colour',
@@ -720,7 +725,7 @@ export class SunSynkCardEditor
 											schema: [
 												{
 													name: 'count',
-													selector: { number: { mode: 'box', min: 1, max: 2 } },
+													selector: { number: { mode: 'box', min: 1, max: 3 } },
 												},
 												{ name: 'show_daily', selector: { boolean: {} } },
 												{ name: 'animation_speed', selector: { number: {} } },
@@ -832,7 +837,7 @@ export class SunSynkCardEditor
 												},
 											],
 										},
-										...(Number(this._config.battery?.count ?? 1) === 2
+										...(Number(this._config.battery?.count ?? 1) >= 2
 											? [
 													{
 														type: 'expandable',
@@ -929,6 +934,129 @@ export class SunSynkCardEditor
 																schema: [
 																	{
 																		name: 'battery2',
+																		type: 'grid',
+																		schema: [
+																			{
+																				name: 'energy',
+																				selector: { entity: {} },
+																			},
+																			{
+																				name: 'shutdown_soc',
+																				selector: { entity: {} },
+																			},
+																			{
+																				name: 'shutdown_soc_offgrid',
+																				selector: { entity: {} },
+																			},
+																			{
+																				name: 'soc_end_of_charge',
+																				selector: { entity: {} },
+																			},
+																		],
+																	},
+																],
+															},
+														],
+													},
+												]
+											: []),
+										...(Number(this._config.battery?.count ?? 1) === 3
+											? [
+													{
+														type: 'expandable',
+														title: this._title('bat3'),
+														schema: [
+															{
+																name: 'battery3',
+																type: 'grid',
+																schema: [
+																	{
+																		name: 'energy',
+																		selector: { number: { min: 0 } },
+																	},
+																	{
+																		name: 'shutdown_soc',
+																		selector: {
+																			number: { mode: 'box', min: 0, max: 100 },
+																		},
+																	},
+																	{
+																		name: 'shutdown_soc_offgrid',
+																		selector: {
+																			number: { mode: 'box', min: 0, max: 100 },
+																		},
+																	},
+																	{
+																		name: 'soc_end_of_charge',
+																		selector: {
+																			number: {
+																				mode: 'box',
+																				min: 80,
+																				max: 100,
+																			},
+																		},
+																	},
+																	{
+																		name: 'soc_decimal_places',
+																		selector: { number: {} },
+																	},
+																	{
+																		name: 'auto_scale',
+																		selector: { boolean: {} },
+																	},
+																	{
+																		name: 'invert_power',
+																		selector: { boolean: {} },
+																	},
+																	{
+																		name: 'show_absolute',
+																		selector: { boolean: {} },
+																	},
+																	{
+																		name: 'colour',
+																		selector: { color_rgb: {} },
+																	},
+																	{
+																		name: 'charge_colour',
+																		selector: { color_rgb: {} },
+																	},
+																	{
+																		name: 'dynamic_colour',
+																		selector: { boolean: {} },
+																	},
+																	{
+																		name: 'linear_gradient',
+																		selector: { boolean: {} },
+																	},
+																	{
+																		name: 'animate',
+																		selector: { boolean: {} },
+																	},
+																	{
+																		name: 'hide_soc',
+																		selector: { boolean: {} },
+																	},
+																	{
+																		name: 'show_remaining_energy',
+																		selector: { boolean: {} },
+																	},
+																	{
+																		name: 'remaining_energy_to_shutdown',
+																		selector: { boolean: {} },
+																	},
+																	{ name: 'navigate', selector: { text: {} } },
+																	{
+																		name: 'invert_flow',
+																		selector: { boolean: {} },
+																	},
+																],
+															},
+															{
+																type: 'expandable',
+																title: this._title('sensor'),
+																schema: [
+																	{
+																		name: 'battery3',
 																		type: 'grid',
 																		schema: [
 																			{
@@ -1483,7 +1611,7 @@ export class SunSynkCardEditor
 											},
 										],
 									},
-									...(Number(this._config.battery?.count ?? 1) === 2
+									...(Number(this._config.battery?.count ?? 1) >= 2
 										? [
 												{
 													type: 'expandable',
@@ -1548,6 +1676,79 @@ export class SunSynkCardEditor
 																},
 																{
 																	name: 'battery2_status',
+																	selector: { entity: {} },
+																},
+															],
+														},
+													],
+												},
+											]
+										: []),
+									...(Number(this._config.battery?.count ?? 1) === 3
+										? [
+												{
+													type: 'expandable',
+													title: this._title('bat3'),
+													schema: [
+														{
+															name: 'entities',
+															type: 'grid',
+															schema: [
+																{
+																	name: 'battery3_power_190',
+																	selector: {
+																		entity: {
+																			device_class: SensorDeviceClass.POWER,
+																		},
+																	},
+																},
+																{
+																	name: 'battery3_current_191',
+																	selector: {
+																		entity: {
+																			device_class: SensorDeviceClass.CURRENT,
+																		},
+																	},
+																},
+																{
+																	name: 'battery3_temp_182',
+																	selector: {
+																		entity: {
+																			device_class:
+																				SensorDeviceClass.TEMPERATURE,
+																		},
+																	},
+																},
+																{
+																	name: 'battery3_voltage_183',
+																	selector: {
+																		entity: {
+																			device_class: SensorDeviceClass.VOLTAGE,
+																		},
+																	},
+																},
+																{
+																	name: 'battery3_soc_184',
+																	selector: {
+																		entity: {
+																			device_class: SensorDeviceClass.BATTERY,
+																		},
+																	},
+																},
+																{
+																	name: 'battery3_rated_capacity',
+																	selector: { entity: {} },
+																},
+																{
+																	name: 'battery3_soh',
+																	selector: { entity: {} },
+																},
+																{
+																	name: 'battery3_current_direction',
+																	selector: { entity: {} },
+																},
+																{
+																	name: 'battery3_status',
 																	selector: { entity: {} },
 																},
 															],
@@ -1960,7 +2161,7 @@ export class SunSynkCardEditor
 			case 'three_phase': {
 				const on = Boolean(
 					cfg?.inverter &&
-						(cfg.inverter as Record<string, unknown>).three_phase,
+					(cfg.inverter as Record<string, unknown>).three_phase,
 				);
 				const v = on ? '3P' : '1P';
 				return `${base} (${v})`;

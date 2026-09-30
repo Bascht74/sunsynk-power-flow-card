@@ -227,7 +227,8 @@
       "gri": "Encje sieci",
       "sensor": "Opcjonalne sensory",
       "bat1": "Bateria 1",
-      "bat2": "Bateria 2"
+      "bat2": "Bateria 2",
+      "bat3": "Bateria 3"
     }
   }
 }

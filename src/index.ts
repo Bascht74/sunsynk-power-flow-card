@@ -399,6 +399,12 @@ export class SunsynkPowerFlowCard extends LitElement {
 		const stateDayBattery2Charge = this.getEntity(
 			'entities.day_battery2_charge_70',
 		);
+		const stateDayBattery3Discharge = this.getEntity(
+			'entities.day_battery3_discharge_71',
+		);
+		const stateDayBattery3Charge = this.getEntity(
+			'entities.day_battery3_charge_70',
+		);
 		const stateDayLoadEnergy = this.getEntity('entities.day_load_energy_84');
 		const stateDayGridImport = this.getEntity('entities.day_grid_import_76');
 		const stateDayPVEnergy = this.getEntity('entities.day_pv_energy_108');
@@ -532,6 +538,50 @@ export class SunsynkPowerFlowCard extends LitElement {
 		});
 		const stateSOCEndOfCharge2 = this.getEntity('battery2.soc_end_of_charge', {
 			state: config.battery2.soc_end_of_charge?.toString() ?? '',
+		});
+
+		//Battery 3
+		const stateBattery3Voltage = this.getEntity(
+			'entities.battery3_voltage_183',
+		);
+		const stateBattery3Soc = this.getEntity(
+			'entities.battery3_soc_184',
+			null,
+			config.battery3.soc_decimal_places,
+			Percentage.PERCENTAGE,
+		);
+		const stateBattery3Power = this.getEntity('entities.battery3_power_190');
+		const stateBattery3Current = this.getEntity(
+			'entities.battery3_current_191',
+		);
+		const stateBattery3Temp = this.getEntity('entities.battery3_temp_182', {
+			state: '',
+		});
+		const stateBattery3Status = this.getEntity('entities.battery3_status', {
+			state: '',
+		});
+		const stateBattery3CurrentDirection = this.getEntity(
+			'entities.battery3_current_direction',
+			{ state: '' },
+		);
+		const stateBattery3RatedCapacity = this.getEntity(
+			'entities.battery3_rated_capacity',
+			{ state: '' },
+		);
+		const stateShutdownSOC3 = this.getEntity('battery3.shutdown_soc', {
+			state: config.battery3.shutdown_soc?.toString() ?? '',
+		});
+		const stateShutdownSOCOffGrid3 = this.getEntity(
+			'battery3.shutdown_soc_offgrid',
+			{
+				state: config.battery3.shutdown_soc_offgrid?.toString() ?? '',
+			},
+		);
+		const stateBattery3SOH = this.getEntity('entities.battery3_soh', {
+			state: '',
+		});
+		const stateSOCEndOfCharge3 = this.getEntity('battery3.soc_end_of_charge', {
+			state: config.battery3.soc_end_of_charge?.toString() ?? '',
 		});
 
 		//Load
@@ -671,6 +721,9 @@ export class SunsynkPowerFlowCard extends LitElement {
 		const battery2CurrentDirection = !stateBattery2CurrentDirection.isNaN()
 			? stateBattery2CurrentDirection.toNum(0)
 			: null;
+		const battery3CurrentDirection = !stateBattery3CurrentDirection.isNaN()
+			? stateBattery3CurrentDirection.toNum(0)
+			: null;
 		const genericInverterImage = config.inverter?.modern;
 
 		const decimalPlaces = config.decimal_places;
@@ -795,6 +848,9 @@ export class SunsynkPowerFlowCard extends LitElement {
 		const battery2Voltage = config.entities?.battery2_voltage_183
 			? stateBattery2Voltage.toNum(1)
 			: 0;
+		const battery3Voltage = config.entities?.battery3_voltage_183
+			? stateBattery3Voltage.toNum(1)
+			: 0;
 
 		const autoScaledInverterPower = config.entities?.inverter_power_175
 			? stateInverterPower.toPower()
@@ -872,6 +928,10 @@ export class SunsynkPowerFlowCard extends LitElement {
 		const battery2ColourConfig = this.colourConvert(config.battery2?.colour);
 		const battery2ChargeColour = this.colourConvert(
 			config.battery2?.charge_colour || battery2ColourConfig,
+		);
+		const battery3ColourConfig = this.colourConvert(config.battery3?.colour);
+		const battery3ChargeColour = this.colourConvert(
+			config.battery3?.charge_colour || battery3ColourConfig,
 		);
 		const batteryShowDaily = config.battery?.show_daily;
 
@@ -977,6 +1037,9 @@ export class SunsynkPowerFlowCard extends LitElement {
 		let batteryPower = stateBatteryPower.toPower(config.battery?.invert_power);
 		let battery2Power = stateBattery2Power.toPower(
 			config.battery2?.invert_power,
+		);
+		let battery3Power = stateBattery3Power.toPower(
+			config.battery3?.invert_power,
 		);
 
 		const cardHeight = this.getEntity('card_height', {
@@ -1139,7 +1202,10 @@ export class SunsynkPowerFlowCard extends LitElement {
 		};
 
 		let batteryCount = config.battery?.count;
-		if (!config.wide || (batteryCount !== 1 && batteryCount !== 2)) {
+		if (
+			!config.wide ||
+			(batteryCount !== 1 && batteryCount !== 2 && batteryCount !== 3)
+		) {
 			batteryCount = 1;
 		}
 
@@ -1148,6 +1214,9 @@ export class SunsynkPowerFlowCard extends LitElement {
 		const shutdownOffGrid2 =
 			stateShutdownSOCOffGrid2.toNum() || shutdownOffGrid;
 		const batteryShutdown2 = stateShutdownSOC2.toNum() || batteryShutdown;
+		const shutdownOffGrid3 =
+			stateShutdownSOCOffGrid3.toNum() || shutdownOffGrid;
+		const batteryShutdown3 = stateShutdownSOC3.toNum() || batteryShutdown;
 
 		const inverterProg: InverterSettings = {
 			capacity: batteryShutdown,
@@ -1325,14 +1394,30 @@ export class SunsynkPowerFlowCard extends LitElement {
 			}
 		}
 
+		if (battery3CurrentDirection != null) {
+			if (
+				inverterModel == InverterModel.Solis &&
+				battery3CurrentDirection === 0
+			) {
+				battery3Power = -battery3Power;
+			}
+		}
+
 		let maximumSOC = stateSOCEndOfCharge.toNum();
 		maximumSOC = Math.max(50, Math.min(maximumSOC, 100));
 
 		let maximumSOC2 = stateSOCEndOfCharge2.toNum() || maximumSOC;
 		maximumSOC2 = Math.max(50, Math.min(maximumSOC2, 100));
 
+		let maximumSOC3 = stateSOCEndOfCharge3.toNum() || maximumSOC;
+		maximumSOC3 = Math.max(50, Math.min(maximumSOC3, 100));
+
 		const batteryPowerTotal =
-			batteryCount === 2 ? batteryPower + battery2Power : batteryPower;
+			batteryCount === 3
+				? batteryPower + battery2Power + battery3Power
+				: batteryCount === 2
+					? batteryPower + battery2Power
+					: batteryPower;
 
 		//calculate battery capacity
 		let batteryCapacity: number = 0;
@@ -1434,12 +1519,64 @@ export class SunsynkPowerFlowCard extends LitElement {
 			}
 		}
 
+		//calculate battery3 capacity
+		let battery3Capacity: number = 0;
+		if (config.show_battery) {
+			switch (true) {
+				case !inverterProg.show:
+					if (
+						config.battery3.invert_flow === true
+							? battery3Power < 0
+							: battery3Power > 0
+					) {
+						if (
+							(gridStatus === 'on' ||
+								gridStatus === '1' ||
+								gridStatus.toLowerCase() === 'on-grid') &&
+							!inverterProg.show
+						) {
+							battery3Capacity = batteryShutdown3;
+						} else if (
+							(gridStatus === 'off' ||
+								gridStatus === '0' ||
+								gridStatus.toLowerCase() === 'off-grid') &&
+							stateShutdownSOCOffGrid3.notEmpty() &&
+							!inverterProg.show
+						) {
+							battery3Capacity = shutdownOffGrid3;
+						} else {
+							battery3Capacity = batteryShutdown3;
+						}
+					} else if (
+						config.battery3.invert_flow === true
+							? battery3Power > 0
+							: battery3Power < 0
+					) {
+						battery3Capacity = maximumSOC3;
+					}
+					break;
+
+				default:
+					battery3Capacity = inverterSettings.getBatteryCapacity(
+						battery3Power,
+						gridStatus,
+						batteryShutdown3,
+						inverterProg,
+						stateBattery3Soc,
+						maximumSOC3,
+						config.battery3.invert_flow,
+					);
+			}
+		}
+
 		//calculate remaining battery time to charge or discharge
 
 		let formattedResultTime = '';
 		let formattedResultTime2 = '';
+		let formattedResultTime3 = '';
 		let batteryDuration = '';
 		let batteryDuration2 = '';
+		let batteryDuration3 = '';
 
 		const battenergy = this.getEntity('battery.energy', {
 			state: config.battery.energy?.toString() ?? '',
@@ -1449,6 +1586,10 @@ export class SunsynkPowerFlowCard extends LitElement {
 		});
 		let batteryEnergy = battenergy.toPower(false);
 		let battery2Energy = batt2energy.toPower(false);
+		const batt3energy = this.getEntity('battery3.energy', {
+			state: config.battery3.energy?.toString() ?? '',
+		});
+		let battery3Energy = batt3energy.toPower(false);
 
 		if (batteryVoltage && stateBatteryRatedCapacity.notEmpty()) {
 			batteryEnergy = Utils.toNum(
@@ -1462,10 +1603,24 @@ export class SunsynkPowerFlowCard extends LitElement {
 				0,
 			);
 		}
+		if (battery3Voltage && stateBattery3RatedCapacity.notEmpty()) {
+			battery3Energy = Utils.toNum(
+				battery3Voltage * stateBattery3RatedCapacity.toNum(0),
+				0,
+			);
+		}
 
-		const batteryTotalEnergy = batteryEnergy + battery2Energy;
+		const batteryTotalEnergy =
+			batteryEnergy +
+			battery2Energy +
+			(batteryCount === 3 ? battery3Energy : 0);
 
-		if (config.show_battery || batteryEnergy !== 0 || battery2Energy !== 0) {
+		if (
+			config.show_battery ||
+			batteryEnergy !== 0 ||
+			battery2Energy !== 0 ||
+			battery3Energy !== 0
+		) {
 			const calculateTotalSeconds = (
 				soc,
 				shutdown,
@@ -1561,6 +1716,40 @@ export class SunsynkPowerFlowCard extends LitElement {
 				}
 				batteryDuration2 += `${minutes2} ${localize('common.min')}`;
 			}
+			let totalSeconds3 = 0;
+			if (battery3Energy !== 0) {
+				totalSeconds3 = calculateTotalSeconds(
+					stateBattery3Soc,
+					batteryShutdown3,
+					battery3Capacity,
+					battery3Energy,
+					battery3Power,
+					config.battery3.invert_flow,
+				);
+
+				const currentTime3 = new Date();
+				const resultTime3 = new Date(
+					currentTime3.getTime() + totalSeconds3 * 1000,
+				);
+				const resultHours3 = resultTime3.getHours(); // Get the hours component of the resulting time
+				const resultMinutes3 = resultTime3.getMinutes(); // Get the minutes component of the resulting time
+				const formattedMinutes3 = resultMinutes3.toString().padStart(2, '0');
+				const formattedHours3 = resultHours3.toString().padStart(2, '0');
+				formattedResultTime3 = `${formattedHours3}:${formattedMinutes3}`;
+
+				// Calculate duration in days, hours, and minutes
+				const days3 = Math.floor(totalSeconds3 / (60 * 60 * 24));
+				const hours3 = Math.floor((totalSeconds3 % (60 * 60 * 24)) / (60 * 60));
+				const minutes3 = Math.floor((totalSeconds3 % (60 * 60)) / 60);
+
+				if (days3 > 0) {
+					batteryDuration3 += `${days3} ${localize('common.days')}, `;
+				}
+				if (hours3 > 0 || days3 > 0) {
+					batteryDuration3 += `${hours3} ${localize('common.hrs')}, `;
+				}
+				batteryDuration3 += `${minutes3} ${localize('common.min')}`;
+			}
 		}
 
 		const isFloating =
@@ -1573,8 +1762,17 @@ export class SunsynkPowerFlowCard extends LitElement {
 			stateBattery2Current.toNum(0) <= 2 &&
 			stateBattery2Soc.toNum(0) >= 99;
 
+		const isFloating3 =
+			-2 <= stateBattery3Current.toNum(0) &&
+			stateBattery3Current.toNum(0) <= 2 &&
+			stateBattery3Soc.toNum(0) >= 99;
+
 		const isFloatingCombined =
-			batteryCount === 2 ? isFloating && isFloating2 : isFloating;
+			batteryCount === 3
+				? isFloating && isFloating2 && isFloating3
+				: batteryCount === 2
+					? isFloating && isFloating2
+					: isFloating;
 
 		// Determine battery colours
 		let batteryColour: string;
@@ -1597,6 +1795,17 @@ export class SunsynkPowerFlowCard extends LitElement {
 			battery2Colour = battery2ChargeColour;
 		} else {
 			battery2Colour = battery2ColourConfig;
+		}
+
+		let battery3Colour: string;
+		if (
+			config.battery3.invert_flow === true
+				? battery3Power > 0 && !isFloating3
+				: battery3Power < 0 && !isFloating3
+		) {
+			battery3Colour = battery3ChargeColour;
+		} else {
+			battery3Colour = battery3ColourConfig;
 		}
 
 		//Set Inverter Status Message and dot
@@ -1646,8 +1855,11 @@ export class SunsynkPowerFlowCard extends LitElement {
 		let batteryStateMsg = '';
 		let battery2StateColour = 'transparent';
 		let battery2StateMsg = '';
+		let battery3StateColour = 'transparent';
+		let battery3StateMsg = '';
 		let battery1Found = false;
 		let battery2Found = false;
+		let battery3Found = false;
 
 		if (
 			[
@@ -1684,7 +1896,16 @@ export class SunsynkPowerFlowCard extends LitElement {
 					}
 
 					// Break the loop if both batteries are found
-					if (battery1Found && battery2Found) break;
+					if (
+						!battery3Found &&
+						states.includes(stateBattery3Status.state.toLowerCase())
+					) {
+						battery3StateColour = color;
+						battery3StateMsg = message;
+						battery3Found = true;
+					}
+
+					if (battery1Found && battery2Found && battery3Found) break;
 				}
 			}
 
@@ -1715,12 +1936,30 @@ export class SunsynkPowerFlowCard extends LitElement {
 					battery2StateMsg = 'Status';
 				}
 			}
+
+			// Default logic for battery 3
+			if (!battery3Found) {
+				if (
+					config.entities?.battery3_status === 'none' ||
+					!config.entities?.battery3_status
+				) {
+					battery3StateColour = 'transparent';
+					battery3StateMsg = '';
+				} else {
+					battery3StateColour = 'transparent';
+					battery3StateMsg = 'Status';
+				}
+			}
 		}
 
 		const totalDayBatteryDischarge =
-			stateDayBatteryDischarge.toNum() + stateDayBattery2Discharge.toNum();
+			stateDayBatteryDischarge.toNum() +
+			stateDayBattery2Discharge.toNum() +
+			stateDayBattery3Discharge.toNum();
 		const totalDayBatteryCharge =
-			stateDayBatteryCharge.toNum() + stateDayBattery2Charge.toNum();
+			stateDayBatteryCharge.toNum() +
+			stateDayBattery2Charge.toNum() +
+			stateDayBattery3Charge.toNum();
 
 		//Autarky in Percent = Home Production / Home Consumption
 		//Ratio in Percent = Home Consumption / Home Production
@@ -2273,6 +2512,12 @@ export class SunsynkPowerFlowCard extends LitElement {
 			stopColour: stop2Colour,
 			battery0: battery20,
 		} = BatteryIconManager.convert(stateBattery2Soc);
+		const {
+			batteryIcon: battery3Icon,
+			batteryCharge: battery3Charge,
+			stopColour: stop3Colour,
+			battery0: battery30,
+		} = BatteryIconManager.convert(stateBattery3Soc);
 
 		//Calculate pv efficiency
 		const pv1MaxPower = this.getEntity('solar.pv1_max_power', {
@@ -2504,10 +2749,12 @@ export class SunsynkPowerFlowCard extends LitElement {
 		const gridStatusLower = gridStatus.toLowerCase();
 		let batteryOneShutdown = batteryShutdown;
 		let batteryTwoShutdown = batteryShutdown2;
+		let batteryThreeShutdown = batteryShutdown3;
 		switch (true) {
 			case ['on', '1', 'on-grid'].includes(gridStatusLower):
 				batteryOneShutdown = batteryShutdown;
 				batteryTwoShutdown = batteryShutdown2;
+				batteryThreeShutdown = batteryShutdown3;
 				break;
 
 			case ['off', '0', 'off-grid'].includes(gridStatusLower):
@@ -2517,6 +2764,9 @@ export class SunsynkPowerFlowCard extends LitElement {
 				batteryTwoShutdown = stateShutdownSOCOffGrid2.notEmpty()
 					? shutdownOffGrid2
 					: batteryShutdown2;
+				batteryThreeShutdown = stateShutdownSOCOffGrid3.notEmpty()
+					? shutdownOffGrid3
+					: batteryShutdown3;
 				break;
 		}
 		/**
@@ -2762,6 +3012,27 @@ export class SunsynkPowerFlowCard extends LitElement {
 			customGridIcon,
 			customGridIconColour,
 			maximumSOC,
+			battery3Colour,
+			isFloating3,
+			battery3Energy,
+			battery3Power,
+			batteryDuration3,
+			battery3Capacity,
+			battery3StateMsg,
+			batteryShutdown3,
+			shutdownOffGrid3,
+			batteryThreeShutdown,
+			battery3Voltage,
+			battery30,
+			battery3StateColour,
+			battery3Charge,
+			battery3Icon,
+			formattedResultTime3,
+			stateBattery3Soc,
+			stateBattery3Current,
+			stateBattery3Temp,
+			stateBattery3SOH,
+			stop3Colour,
 			batteryCount,
 		};
 
