@@ -39,7 +39,7 @@ export const fullCard = (
 				<svg
 					viewBox="${config.wide
 						? data.batteryCount === 3
-							? '0 0 720 500'
+							? '0 0 720 540'
 							: '0 0 720 405'
 						: '0 0 483 405'}"
 					preserveAspectRatio="xMidYMid meet"
