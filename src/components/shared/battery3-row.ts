@@ -74,7 +74,7 @@ const oneBattery = (
 	const cx = x + iconSize / 2;
 	return svg`
 		<g style="cursor: pointer;" @click=${onClick}>
-			<text x="${cx}" y="${iconY - 8}" class="st3" fill="${colour}">
+			<text x="${cx}" y="${iconY + 4}" class="st3" fill="${colour}">
 				${socText}
 			</text>
 			<svg
@@ -86,12 +86,12 @@ const oneBattery = (
 			>
 				<path fill="${colour}" d="${icon}" />
 			</svg>
-			<text x="${cx}" y="${iconY + iconSize + 14}" class="st3" fill="${colour}">
+			<text x="${cx}" y="${iconY + iconSize + 2}" class="st3" fill="${colour}">
 				${powerText}
 			</text>
 			<text
 				x="${cx}"
-				y="${iconY + iconSize + 28}"
+				y="${iconY + iconSize + 16}"
 				class="remaining-energy"
 				fill="${colour}"
 			>
@@ -145,9 +145,9 @@ export const renderBattery3Row = (
 	}
 
 	const full = mode === 'full';
-	const icon = full ? 80 : 52;
-	const iconY = full ? 336 : 312;
-	const xs = full ? [152, 244, 336] : [133, 211, 289];
+	const icon = full ? 76 : 52;
+	const iconY = full ? 296 : 312;
+	const xs = full ? [158, 246, 334] : [133, 211, 289];
 	const packs = [
 		{
 			colour: data.batteryColour,
@@ -232,26 +232,24 @@ export const renderBattery3Row = (
 									${total}
 								</text>
 							</g>
-							${packs.map((pack, index) =>
-								leftLabels(
-									140,
-									330 + index * 62,
-									pack.colour,
-									pack.soc?.isValid()
-										? `${Utils.formatNumberLocale(pack.shutdown || 0, 0)}% | ${Utils.formatNumberLocale(pack.soc.toNum(0), 0)}%`
-										: '',
-									pack.duration || '',
-									runtimeText(
-										pack.energy,
-										pack.power,
-										!!pack.cfg?.invert_flow,
-										!!pack.floating,
-										pack.capacity,
-										pack.formatted || '',
-									),
-									pack.energy !== 0 && !pack.floating && pack.power !== 0,
-									data.largeFont === true,
+							${leftLabels(
+								142,
+								318,
+								packs[0].colour,
+								packs[0].soc?.isValid()
+									? `${Utils.formatNumberLocale(packs[0].shutdown || 0, 0)}% | ${Utils.formatNumberLocale(packs[0].soc.toNum(0), 0)}%`
+									: '',
+								packs[0].duration || '',
+								runtimeText(
+									packs[0].energy,
+									packs[0].power,
+									!!packs[0].cfg?.invert_flow,
+									!!packs[0].floating,
+									packs[0].capacity,
+									packs[0].formatted || '',
 								),
+								packs[0].energy !== 0 && !packs[0].floating && packs[0].power !== 0,
+								data.largeFont === true,
 							)}
 						`
 					: svg`
