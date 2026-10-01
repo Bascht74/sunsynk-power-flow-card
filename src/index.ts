@@ -2698,6 +2698,19 @@ export class SunsynkPowerFlowCard extends LitElement {
 			viewBoxWidthLite = String(defW);
 		}
 
+		// Compact/lite: the essential load is the block to the right of the
+		// inverter. With no load entity that strip is empty, so crop it the
+		// same way the viewBox already drops unused solar or battery space.
+		if (
+			!showEssential &&
+			!config.wide &&
+			(this.isLiteCard || this.isCompactCard)
+		) {
+			const mppts = Utils.toNum(config.solar?.mppts, 1);
+			const rightEdge = mppts >= 4 ? 455 : 400;
+			viewBoxWidthLite = String(rightEdge - Number(viewBoxXLite));
+		}
+
 		const loadOffThreshold = Utils.toNum(config.load?.off_threshold, 0);
 		const offColourTransparent = config.load?.off_colour === 'transparent';
 
