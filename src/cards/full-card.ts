@@ -37,7 +37,11 @@ export const fullCard = (
 			<div class="container card">
 				${titleTemplate}
 				<svg
-					viewBox="${config.wide ? '0 0 720 405' : '0 0 483 405'}"
+					viewBox="${config.wide
+						? data.batteryCount === 3
+							? '0 0 720 500'
+							: '0 0 720 405'
+						: '0 0 483 405'}"
 					preserveAspectRatio="xMidYMid meet"
 					height="${data.cardHeight}"
 					width="${data.cardWidth}"

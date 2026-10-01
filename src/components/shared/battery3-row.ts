@@ -1,15 +1,11 @@
 import { svg } from 'lit';
 import { Utils } from '../../helpers/utils';
 import { DataDto, sunsynkPowerFlowCardConfig } from '../../types';
-import {
-	UnitOfElectricalCurrent,
-	UnitOfElectricPotential,
-	UnitOfEnergy,
-	UnitOfPower,
-} from '../../const';
+import { UnitOfEnergy, UnitOfPower } from '../../const';
 import { renderPath } from '../../helpers/render-path';
 import { renderCircle } from '../../helpers/render-circle';
 import { CustomEntity } from '../../inverters/dto/custom-entity';
+import { localize } from '../../localize/localize';
 
 type BatterySection = sunsynkPowerFlowCardConfig['battery2'];
 
@@ -26,67 +22,61 @@ const powerLabel = (
 	return `${Utils.toNum(value, 0)} ${UnitOfPower.WATT}`;
 };
 
+const remainLabel = (
+	energy: number,
+	soc: CustomEntity,
+	cfg: BatterySection,
+	shutdown: number,
+) => {
+	if (!cfg?.show_remaining_energy || !energy || !soc?.isValid()) {
+		return '';
+	}
+	const floor = cfg.remaining_energy_to_shutdown ? shutdown || 0 : 0;
+	const usable = Math.max(soc.toNum() - floor, 0);
+	return `${Utils.formatNumberLocale(
+		Utils.toNum((energy * (usable / 100)) / 1000, 2),
+		2,
+	)} ${UnitOfEnergy.KILO_WATT_HOUR}`;
+};
+
+const runtimeText = (
+	energy: number,
+	power: number,
+	invert: boolean,
+	floating: boolean,
+	capacity: number,
+	formatted: string,
+) => {
+	if (floating) {
+		return localize('common.battery_floating');
+	}
+	if (!energy || power === 0) {
+		return '';
+	}
+	const discharging = invert ? power < 0 : power > 0;
+	if (discharging) {
+		return `${localize('common.runtime_to')} ${capacity}% @${formatted}`;
+	}
+	return `${localize('common.to')} ${capacity}% ${localize('common.charge')} @${formatted}`;
+};
+
 const oneBattery = (
-	data: DataDto,
 	x: number,
 	iconSize: number,
 	iconY: number,
-	indexLabel: string,
 	colour: string,
-	power: number,
-	voltage: number,
-	energy: number,
+	powerText: string,
+	remain: string,
+	socText: string,
 	icon: string,
-	soc: CustomEntity,
-	current: CustomEntity,
-	temp: CustomEntity,
-	cfg: BatterySection,
-	powerEntity: string,
-	socEntity: string,
+	onClick: (e) => void,
 ) => {
 	const cx = x + iconSize / 2;
-	const socText = soc?.isValid()
-		? `${Utils.formatNumberLocale(soc.toNum(0), 0)}%`
-		: '';
-	const remain =
-		cfg?.show_remaining_energy && energy
-			? `${Utils.formatNumberLocale(
-					Utils.toNum((energy * (soc.toNum() / 100)) / 1000, 1),
-					1,
-				)} ${UnitOfEnergy.KILO_WATT_HOUR}`
-			: '';
-	const volts =
-		voltage > 0
-			? `${Utils.formatNumberLocale(voltage, 1)} ${UnitOfElectricPotential.VOLT}`
-			: '';
-	const amps = current?.isValid()
-		? `${Utils.formatNumberLocale(
-				cfg?.show_absolute ? Math.abs(current.toNum(1)) : current.toNum(1),
-				1,
-			)} ${UnitOfElectricalCurrent.AMPERE}`
-		: '';
-	const open = (e) =>
-		cfg?.navigate
-			? Utils.handleNavigation(e, cfg.navigate)
-			: Utils.handlePopup(e, powerEntity || socEntity);
-
 	return svg`
-		<g id="battery${indexLabel}_third" style="cursor: pointer;" @click=${open}>
-			<text
-				x="${x + 4}"
-				y="${iconY - 6}"
-				class="st3 left-align"
-				fill="${colour}"
-			>
-				${indexLabel}
+		<g style="cursor: pointer;" @click=${onClick}>
+			<text x="${cx}" y="${iconY - 8}" class="st3" fill="${colour}">
+				${socText}
 			</text>
-			${
-				temp?.isValid()
-					? svg`<text x="${cx}" y="${iconY - 2}" class="st3" fill="${colour}">
-							${Utils.formatNumberLocale(temp.toNum(1), 1)}°
-						</text>`
-					: svg``
-			}
 			<svg
 				x="${x}"
 				y="${iconY}"
@@ -96,35 +86,54 @@ const oneBattery = (
 			>
 				<path fill="${colour}" d="${icon}" />
 			</svg>
+			<text x="${cx}" y="${iconY + iconSize + 14}" class="st3" fill="${colour}">
+				${powerText}
+			</text>
 			<text
 				x="${cx}"
-				y="${iconY + iconSize * 0.62}"
-				class="st10"
+				y="${iconY + iconSize + 28}"
+				class="remaining-energy"
 				fill="${colour}"
 			>
-				${socText}
-			</text>
-			<text x="${cx}" y="${iconY + iconSize + 14}" class="st3" fill="${colour}">
-				${powerLabel(
-					power,
-					cfg?.auto_scale !== false,
-					!!cfg?.show_absolute,
-					data.decimalPlaces,
-				)}
-			</text>
-			<text x="${cx}" y="${iconY + iconSize + 26}" class="st3" fill="${colour}">
-				${volts}${amps ? ` · ${amps}` : ''}
-			</text>
-			<text x="${cx}" y="${iconY + iconSize + 38}" class="st3" fill="${colour}">
 				${remain}
 			</text>
 		</g>
 	`;
 };
 
+const leftLabels = (
+	x: number,
+	y: number,
+	colour: string,
+	socLine: string,
+	duration: string,
+	runtime: string,
+	showDuration: boolean,
+	largeFont: boolean,
+) => svg`
+	<text x="${x}" y="${y}" class="st13 st8 right-align" fill="${colour}">
+		${socLine}
+	</text>
+	<text
+		x="${x}"
+		y="${y + 22}"
+		class="${largeFont ? 'st4' : 'st14'} right-align"
+		fill="${showDuration ? colour : 'transparent'}"
+	>
+		${duration}
+	</text>
+	<text x="${x}" y="${y + 38}" class="st3 right-align" fill="${colour}">
+		${runtime}
+	</text>
+`;
+
 /**
  * Dedicated row used only when battery.count is 3.
  * One- and two-battery graphics stay on the original layout.
+ * Full mode follows the two-battery arrangement: shutdown and runtime
+ * stay on the left for every pack, the third pack sits between the other
+ * two, SOC replaces the temperature, watts sit under the icon and the
+ * remaining energy moves down one line.
  */
 export const renderBattery3Row = (
 	data: DataDto,
@@ -136,95 +145,149 @@ export const renderBattery3Row = (
 	}
 
 	const full = mode === 'full';
-	const icon = full ? 64 : 52;
-	const iconY = full ? 292 : 312;
-	const xs = full ? [16, 108, 200] : [133, 211, 289];
-	const slots = [
+	const icon = full ? 80 : 52;
+	const iconY = full ? 300 : 312;
+	const xs = full ? [152, 244, 336] : [133, 211, 289];
+	const packs = [
 		{
-			x: xs[0],
-			label: '1',
 			colour: data.batteryColour,
 			power: data.batteryPower,
-			voltage: data.batteryVoltage,
 			energy: data.batteryEnergy,
 			icon: data.batteryIcon,
 			soc: data.stateBatterySoc,
-			current: data.stateBatteryCurrent,
-			temp: data.stateBatteryTemp,
 			cfg: config.battery,
 			powerEntity: config.entities?.battery_power_190,
 			socEntity: config.entities?.battery_soc_184,
+			shutdown: data.batteryShutdown,
+			duration: data.batteryDuration,
+			formatted: data.formattedResultTime,
+			capacity: data.batteryCapacity,
+			floating: data.isFloating,
 		},
 		{
-			x: xs[1],
-			label: '2',
-			colour: data.battery2Colour,
-			power: data.battery2Power,
-			voltage: data.battery2Voltage,
-			energy: data.battery2Energy,
-			icon: data.battery2Icon,
-			soc: data.stateBattery2Soc,
-			current: data.stateBattery2Current,
-			temp: data.stateBattery2Temp,
-			cfg: config.battery2,
-			powerEntity: config.entities?.battery2_power_190,
-			socEntity: config.entities?.battery2_soc_184,
-		},
-		{
-			x: xs[2],
-			label: '3',
 			colour: data.battery3Colour,
 			power: data.battery3Power,
-			voltage: data.battery3Voltage,
 			energy: data.battery3Energy,
 			icon: data.battery3Icon,
 			soc: data.stateBattery3Soc,
-			current: data.stateBattery3Current,
-			temp: data.stateBattery3Temp,
 			cfg: config.battery3,
 			powerEntity: config.entities?.battery3_power_190,
 			socEntity: config.entities?.battery3_soc_184,
+			shutdown: data.batteryShutdown3,
+			duration: data.batteryDuration3,
+			formatted: data.formattedResultTime3,
+			capacity: data.battery3Capacity,
+			floating: data.isFloating3,
+		},
+		{
+			colour: data.battery2Colour,
+			power: data.battery2Power,
+			energy: data.battery2Energy,
+			icon: data.battery2Icon,
+			soc: data.stateBattery2Soc,
+			cfg: config.battery2,
+			powerEntity: config.entities?.battery2_power_190,
+			socEntity: config.entities?.battery2_soc_184,
+			shutdown: data.batteryShutdown2,
+			duration: data.batteryDuration2,
+			formatted: data.formattedResultTime2,
+			capacity: data.battery2Capacity,
+			floating: data.isFloating2,
 		},
 	];
 
-	const totalX = full ? 136 : 239;
-	const totalY = full ? 258 : 292;
 	const total = powerLabel(
 		data.batteryPowerTotal,
 		config.battery?.auto_scale !== false,
 		!!config.battery?.show_absolute,
 		data.decimalPlaces,
 	);
+	const totalColour = config.battery.dynamic_colour
+		? data.flowBatColour
+		: data.batteryColour;
 
 	return svg`
 		<g id="three_batteries">
-			<text
-				x="${totalX}"
-				y="${totalY}"
-				class="st14 st8"
-				fill="${data.batteryColour}"
-			>
-				${total}
-			</text>
-			${slots.map((slot) =>
-				oneBattery(
-					data,
-					slot.x,
-					icon,
-					iconY,
-					slot.label,
-					slot.colour,
-					slot.power,
-					slot.voltage,
-					slot.energy,
-					slot.icon,
-					slot.soc,
-					slot.current,
-					slot.temp,
-					slot.cfg,
-					slot.powerEntity,
-					slot.socEntity,
-				),
+			${
+				full
+					? svg`
+							<g id="battery_total_power_three">
+								<rect
+									x="86"
+									y="265"
+									width="70"
+									height="30"
+									rx="4.5"
+									ry="4.5"
+									fill="none"
+									stroke="${totalColour}"
+									pointer-events="all"
+								/>
+								<text
+									x="120"
+									y="282"
+									class="${data.largeFont !== true ? 'st14' : 'st4'} st8"
+									fill="${data.batteryColour}"
+								>
+									${total}
+								</text>
+							</g>
+							${packs.map((pack, index) =>
+								leftLabels(
+									140,
+									300 + index * 62,
+									pack.colour,
+									pack.soc?.isValid()
+										? `${Utils.formatNumberLocale(pack.shutdown || 0, 0)}% | ${Utils.formatNumberLocale(pack.soc.toNum(0), 0)}%`
+										: '',
+									pack.duration || '',
+									runtimeText(
+										pack.energy,
+										pack.power,
+										!!pack.cfg?.invert_flow,
+										!!pack.floating,
+										pack.capacity,
+										pack.formatted || '',
+									),
+									pack.energy !== 0 && !pack.floating && pack.power !== 0,
+									data.largeFont === true,
+								),
+							)}
+						`
+					: svg`
+							<text
+								x="239"
+								y="292"
+								class="st14 st8"
+								fill="${data.batteryColour}"
+							>
+								${total}
+							</text>
+						`
+			}
+			${packs.map(
+				(pack, index) =>
+					oneBattery(
+						xs[index],
+						icon,
+						iconY,
+						pack.colour,
+						powerLabel(
+							pack.power,
+							pack.cfg?.auto_scale !== false,
+							!!pack.cfg?.show_absolute,
+							data.decimalPlaces,
+						),
+						remainLabel(pack.energy, pack.soc, pack.cfg, pack.shutdown),
+						pack.soc?.isValid()
+							? `${Utils.formatNumberLocale(pack.soc.toNum(0), 0)}%`
+							: '',
+						pack.icon,
+						(e) =>
+							pack.cfg?.navigate
+								? Utils.handleNavigation(e, pack.cfg.navigate)
+								: Utils.handlePopup(e, pack.powerEntity || pack.socEntity),
+					),
 			)}
 			${
 				mode === 'compact'
@@ -234,9 +297,7 @@ export const renderBattery3Row = (
 									'bat-line',
 									'M 239 250 L 239 306',
 									true,
-									config.battery.dynamic_colour
-										? data.flowBatColour
-										: data.batteryColour,
+									totalColour,
 									data.batLineWidth,
 								)}
 								${renderCircle(
@@ -261,9 +322,7 @@ export const renderBattery3Row = (
 									),
 									data.batteryPowerTotal > 0 || data.batteryPowerTotal === 0
 										? 'transparent'
-										: config.battery.dynamic_colour
-											? data.flowBatColour
-											: data.batteryColour,
+										: totalColour,
 									data.durationCur['battery'],
 									'0;1',
 									'#bat-line',

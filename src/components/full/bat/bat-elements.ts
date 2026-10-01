@@ -1180,11 +1180,9 @@ export const renderBatteryElements = (
 				${renderPath(
 					'bat-line',
 					config.wide
-						? batteryCount === 3
-							? 'M 279 280 L 136 300'
-							: batteryCount === 2
-								? 'M 279 280 L 156 281'
-								: 'M 279 280 L 96 280 Q 86 280 86 290 L 86 297'
+						? batteryCount === 3 || batteryCount === 2
+							? 'M 279 280 L 156 281'
+							: 'M 279 280 L 96 280 Q 86 280 86 290 L 86 297'
 						: 'M 155 280 L 96 280 Q 86 280 86 290 L 86 297',
 					true,
 					config.battery.dynamic_colour ? data.flowBatColour : batteryColour,
