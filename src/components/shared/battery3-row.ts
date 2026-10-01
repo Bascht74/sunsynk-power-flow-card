@@ -1,4 +1,4 @@
-import { html } from 'lit';
+import { svg } from 'lit';
 import { Utils } from '../../helpers/utils';
 import { DataDto, sunsynkPowerFlowCardConfig } from '../../types';
 import {
@@ -70,7 +70,7 @@ const oneBattery = (
 			? Utils.handleNavigation(e, cfg.navigate)
 			: Utils.handlePopup(e, powerEntity || socEntity);
 
-	return html`
+	return svg`
 		<g id="battery${indexLabel}_third" style="cursor: pointer;" @click=${open}>
 			<text
 				x="${x + 4}"
@@ -82,10 +82,10 @@ const oneBattery = (
 			</text>
 			${
 				temp?.isValid()
-					? html`<text x="${cx}" y="${iconY - 2}" class="st3" fill="${colour}">
+					? svg`<text x="${cx}" y="${iconY - 2}" class="st3" fill="${colour}">
 							${Utils.formatNumberLocale(temp.toNum(1), 1)}°
 						</text>`
-					: html``
+					: svg``
 			}
 			<svg
 				x="${x}"
@@ -132,7 +132,7 @@ export const renderBattery3Row = (
 	mode: 'full' | 'compact',
 ) => {
 	if (data.batteryCount !== 3 || !config.show_battery) {
-		return html``;
+		return svg``;
 	}
 
 	const full = mode === 'full';
@@ -196,7 +196,7 @@ export const renderBattery3Row = (
 		data.decimalPlaces,
 	);
 
-	return html`
+	return svg`
 		<g id="three_batteries">
 			<text
 				x="${totalX}"
@@ -228,7 +228,7 @@ export const renderBattery3Row = (
 			)}
 			${
 				mode === 'compact'
-					? html`
+					? svg`
 							<svg id="battery_flow_three">
 								${renderPath(
 									'bat-line',
@@ -271,7 +271,7 @@ export const renderBattery3Row = (
 								)}
 							</svg>
 						`
-					: html``
+					: svg``
 			}
 		</g>
 	`;
