@@ -72,13 +72,14 @@ const oneBattery = (
 	onClick: (e) => void,
 ) => {
 	const cx = x + iconSize / 2;
+	const iconX = x + iconSize / 6;
 	return svg`
 		<g style="cursor: pointer;" @click=${onClick}>
 			<text x="${cx}" y="${iconY + 4}" class="st3" fill="${colour}">
 				${socText}
 			</text>
 			<svg
-				x="${x}"
+				x="${iconX}"
 				y="${iconY}"
 				width="${iconSize}"
 				height="${iconSize}"
