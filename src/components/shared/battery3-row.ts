@@ -69,6 +69,11 @@ const oneBattery = (
 	remain: string,
 	socText: string,
 	icon: string,
+	shell: string,
+	charge: string,
+	stopColour: string,
+	gradient: boolean,
+	gid: string,
 	onClick: (e) => void,
 ) => {
 	const cx = x + iconSize / 2;
@@ -80,13 +85,24 @@ const oneBattery = (
 			</text>
 			<svg
 				x="${iconX}"
-				y="${iconY}"
+				y="${iconY + 2}"
 				width="${iconSize}"
 				height="${iconSize}"
 				preserveAspectRatio="none"
 				viewBox="0 0 24 24"
 			>
-				<path fill="${colour}" d="${icon}" />
+				<path fill="${colour}" d="${gradient ? shell : icon}" />
+				<defs>
+					<linearGradient id="${gid}" x1="0%" x2="0%" y1="100%" y2="0%">
+						<stop offset="0%" stop-color="red" />
+						<stop offset="100%" stop-color="${stopColour}" />
+					</linearGradient>
+				</defs>
+				<path
+					fill="${gradient ? `url(#${gid})` : colour}"
+					display="${gradient ? '' : 'none'}"
+					d="${charge}"
+				/>
 			</svg>
 			<text x="${cx}" y="${iconY + iconSize + 2}" class="st3" fill="${colour}">
 				${powerText}
@@ -156,6 +172,9 @@ export const renderBattery3Row = (
 			power: data.batteryPower,
 			energy: data.batteryEnergy,
 			icon: data.batteryIcon,
+			shell: data.battery0,
+			charge: data.batteryCharge,
+			stop: data.stopColour,
 			soc: data.stateBatterySoc,
 			cfg: config.battery,
 			powerEntity: config.entities?.battery_power_190,
@@ -171,6 +190,9 @@ export const renderBattery3Row = (
 			power: data.battery3Power,
 			energy: data.battery3Energy,
 			icon: data.battery3Icon,
+			shell: data.battery30,
+			charge: data.battery3Charge,
+			stop: data.stop3Colour,
 			soc: data.stateBattery3Soc,
 			cfg: config.battery3,
 			powerEntity: config.entities?.battery3_power_190,
@@ -186,6 +208,9 @@ export const renderBattery3Row = (
 			power: data.battery2Power,
 			energy: data.battery2Energy,
 			icon: data.battery2Icon,
+			shell: data.battery20,
+			charge: data.battery2Charge,
+			stop: data.stop2Colour,
 			soc: data.stateBattery2Soc,
 			cfg: config.battery2,
 			powerEntity: config.entities?.battery2_power_190,
@@ -235,7 +260,7 @@ export const renderBattery3Row = (
 								</text>
 							</g>
 							${leftLabels(
-								108,
+								138,
 								328,
 								packs[0].colour,
 								packs[0].soc?.isValid()
@@ -283,6 +308,11 @@ export const renderBattery3Row = (
 							? `${Utils.formatNumberLocale(pack.soc.toNum(0), 0)}%`
 							: '',
 						pack.icon,
+						pack.shell,
+						pack.charge,
+						pack.stop,
+						!!pack.cfg?.linear_gradient,
+						`sLg-row-${index}`,
 						(e) =>
 							pack.cfg?.navigate
 								? Utils.handleNavigation(e, pack.cfg.navigate)
