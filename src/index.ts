@@ -802,6 +802,7 @@ export class SunsynkPowerFlowCard extends LitElement {
 
 		const loadShowDaily = config.load?.show_daily;
 		const showNonessential = config.grid?.show_nonessential;
+		const showEssential = config.load?.show_essential !== false;
 		let gridStatus = config.entities?.grid_connected_status_194
 			? stateGridConnectedStatus.state
 			: 'on';
@@ -2955,6 +2956,7 @@ export class SunsynkPowerFlowCard extends LitElement {
 			formattedResultTime,
 			formattedResultTime2,
 			showAux,
+			showEssential,
 			nonessentialIcon,
 			showNonessential,
 			auxStatus,

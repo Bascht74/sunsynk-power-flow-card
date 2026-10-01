@@ -57,7 +57,7 @@ export const renderLoadElements = (
 		<!-- Load Elements -->
 		<svg
 			id="Load"
-			style="overflow: visible; border: 1px solid red;"
+			style="overflow: visible; display: ${config.load.show_essential === false ? 'none' : 'inline'};"
 			x="${config.wide ? '30%' : '3%'}"
 			y="2.5%"
 		>
