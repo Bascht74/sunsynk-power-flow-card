@@ -145,9 +145,9 @@ export const renderBattery3Row = (
 	}
 
 	const full = mode === 'full';
-	const icon = full ? 76 : 52;
-	const iconY = full ? 296 : 312;
-	const xs = full ? [158, 246, 334] : [133, 211, 289];
+	const icon = full ? 72 : 52;
+	const iconY = full ? 318 : 312;
+	const xs = full ? [156, 238, 320] : [133, 211, 289];
 	const packs = [
 		{
 			colour: data.batteryColour,
@@ -233,8 +233,8 @@ export const renderBattery3Row = (
 								</text>
 							</g>
 							${leftLabels(
-								142,
-								318,
+								128,
+								340,
 								packs[0].colour,
 								packs[0].soc?.isValid()
 									? `${Utils.formatNumberLocale(packs[0].shutdown || 0, 0)}% | ${Utils.formatNumberLocale(packs[0].soc.toNum(0), 0)}%`
