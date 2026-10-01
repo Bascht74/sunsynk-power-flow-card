@@ -115,7 +115,6 @@ export default {
 		off_threshold: 0,
 		show_daily: false,
 		show_aux: false,
-		show_essential: true,
 		show_daily_aux: false,
 		invert_aux: false,
 		invert_load: false,

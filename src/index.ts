@@ -802,7 +802,28 @@ export class SunsynkPowerFlowCard extends LitElement {
 
 		const loadShowDaily = config.load?.show_daily;
 		const showNonessential = config.grid?.show_nonessential;
-		const showEssential = config.load?.show_essential !== false;
+		const loadEntitySet = (value?: string) => {
+			const normalized = (value ?? '').trim().toLowerCase();
+			return (
+				normalized !== '' &&
+				normalized !== 'none' &&
+				normalized !== 'no' &&
+				normalized !== 'zero'
+			);
+		};
+		const showEssential = [
+			config.entities?.essential_power,
+			config.entities?.load_power_L1,
+			config.entities?.load_power_L2,
+			config.entities?.load_power_L3,
+			config.entities?.essential_load1,
+			config.entities?.essential_load2,
+			config.entities?.essential_load3,
+			config.entities?.essential_load4,
+			config.entities?.essential_load5,
+			config.entities?.essential_load6,
+			config.entities?.day_load_energy_84,
+		].some(loadEntitySet);
 		let gridStatus = config.entities?.grid_connected_status_194
 			? stateGridConnectedStatus.state
 			: 'on';

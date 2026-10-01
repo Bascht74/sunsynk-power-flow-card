@@ -111,8 +111,6 @@ export class SunSynkCardEditor
 		show_nonessential: 'Show non-essential loads.',
 		show_aux:
 			'Show the Aux subsection (separate auxiliary load configuration).',
-		show_essential:
-			'Show the essential load (house). Turn off to hide the house icon, its power and the line.',
 		label_daily_load:
 			'Alternate label for the daily load value displayed under Load.',
 		label_daily_chrg:
@@ -1184,7 +1182,6 @@ export class SunSynkCardEditor
 									{ name: 'navigate', selector: { text: {} } },
 									{ name: 'label_daily_load', selector: { text: {} } },
 									{ name: 'invert_flow', selector: { boolean: {} } },
-									{ name: 'show_essential', selector: { boolean: {} } },
 									{ name: 'show_aux', selector: { boolean: {} } },
 								],
 							},

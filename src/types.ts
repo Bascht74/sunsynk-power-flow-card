@@ -231,7 +231,6 @@ export interface sunsynkPowerFlowCardConfig extends LovelaceCardConfig {
 		load5_icon: string;
 		load6_icon: string;
 		show_aux: boolean;
-		show_essential: boolean;
 		show_daily_aux: boolean;
 		auto_scale: boolean;
 		essential_name: string;
