@@ -82,6 +82,7 @@ const oneBattery = (
 				y="${iconY}"
 				width="${iconSize}"
 				height="${iconSize}"
+				preserveAspectRatio="none"
 				viewBox="0 0 24 24"
 			>
 				<path fill="${colour}" d="${icon}" />
@@ -145,9 +146,9 @@ export const renderBattery3Row = (
 	}
 
 	const full = mode === 'full';
-	const icon = full ? 72 : 52;
-	const iconY = full ? 318 : 312;
-	const xs = full ? [156, 238, 320] : [133, 211, 289];
+	const icon = full ? 82 : 52;
+	const iconY = full ? 294 : 312;
+	const xs = full ? [138, 187, 236] : [133, 211, 289];
 	const packs = [
 		{
 			colour: data.batteryColour,
@@ -234,7 +235,7 @@ export const renderBattery3Row = (
 							</g>
 							${leftLabels(
 								128,
-								340,
+								328,
 								packs[0].colour,
 								packs[0].soc?.isValid()
 									? `${Utils.formatNumberLocale(packs[0].shutdown || 0, 0)}% | ${Utils.formatNumberLocale(packs[0].soc.toNum(0), 0)}%`
