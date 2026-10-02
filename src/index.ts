@@ -90,6 +90,13 @@ export class SunsynkPowerFlowCard extends LitElement {
 	private _animationsPaused = false;
 	private _phone = false;
 	private _phoneObserver?: ResizeObserver;
+	private _applyPhoneLayout = () => {
+		const phone = window.innerWidth > 0 && window.innerWidth <= 430;
+		if (phone !== this._phone) {
+			this._phone = phone;
+			this.requestUpdate();
+		}
+	};
 	private _isVisible = true;
 
 	// Internal backing field for hass and rAF-based coalescing state
@@ -228,6 +235,7 @@ export class SunsynkPowerFlowCard extends LitElement {
 			this._phoneObserver.disconnect();
 			this._phoneObserver = undefined;
 		}
+		window.removeEventListener('resize', this._applyPhoneLayout);
 		super.disconnectedCallback();
 	}
 
@@ -235,14 +243,10 @@ export class SunsynkPowerFlowCard extends LitElement {
 		super.connectedCallback();
 		if (this._phoneObserver) this._phoneObserver.disconnect();
 		this._phoneObserver = new ResizeObserver(() => {
-			const width = this.getBoundingClientRect().width;
-			const phone = width > 0 && width <= 430;
-			if (phone !== this._phone) {
-				this._phone = phone;
-				this.requestUpdate();
-			}
+			this._applyPhoneLayout();
 		});
 		this._phoneObserver.observe(this);
+		window.addEventListener('resize', this._applyPhoneLayout);
 		// Observe visibility of the card element in the viewport
 		if (this._intersection) this._intersection.disconnect();
 		this._intersection = new IntersectionObserver(
@@ -3109,8 +3113,9 @@ export class SunsynkPowerFlowCard extends LitElement {
 			batteryCount,
 		};
 
-		data.phoneLayout = this._phone;
-		if (this._phone) this.setAttribute('phone', '');
+		data.phoneLayout = window.innerWidth > 0 && window.innerWidth <= 430;
+		this._phone = data.phoneLayout;
+		if (data.phoneLayout) this.setAttribute('phone', '');
 		else this.removeAttribute('phone');
 
 		let template: TemplateResult | null = null;
@@ -3125,7 +3130,10 @@ export class SunsynkPowerFlowCard extends LitElement {
 
 		if (template && variantKey) {
 			return cache(
-				keyed(`${variantKey}${this._phone ? '-phone' : ''}`, template),
+				keyed(
+					`${variantKey}${data.phoneLayout ? '-phone' : ''}`,
+					template,
+				),
 			);
 		}
 
