@@ -32,8 +32,15 @@ export const fullCard = (
 				),
 			)
 		: '';
-	const viewWidth = config.wide ? 720 : 483;
-	const viewHeight = config.wide ? (data.batteryCount === 3 ? 430 : 405) : 405;
+	const phone = data.phoneLayout === true;
+	const viewWidth = phone ? 402 : config.wide ? 720 : 483;
+	const viewHeight = phone
+		? 874
+		: config.wide
+			? data.batteryCount === 3
+				? 430
+				: 405
+			: 405;
 	return html`
 		<ha-card>
 			${getDynamicStyles(data)}

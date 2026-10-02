@@ -88,6 +88,8 @@ export class SunsynkPowerFlowCard extends LitElement {
 	private _intersection?: IntersectionObserver;
 	private _onVisibilityChange?: () => void;
 	private _animationsPaused = false;
+	private _phone = false;
+	private _phoneObserver?: ResizeObserver;
 	private _isVisible = true;
 
 	// Internal backing field for hass and rAF-based coalescing state
@@ -222,11 +224,25 @@ export class SunsynkPowerFlowCard extends LitElement {
 			);
 			this._onVisibilityChange = undefined;
 		}
+		if (this._phoneObserver) {
+			this._phoneObserver.disconnect();
+			this._phoneObserver = undefined;
+		}
 		super.disconnectedCallback();
 	}
 
 	public connectedCallback(): void {
 		super.connectedCallback();
+		if (this._phoneObserver) this._phoneObserver.disconnect();
+		this._phoneObserver = new ResizeObserver(() => {
+			const width = this.getBoundingClientRect().width;
+			const phone = width > 0 && width <= 430;
+			if (phone !== this._phone) {
+				this._phone = phone;
+				this.requestUpdate();
+			}
+		});
+		this._phoneObserver.observe(this);
 		// Observe visibility of the card element in the viewport
 		if (this._intersection) this._intersection.disconnect();
 		this._intersection = new IntersectionObserver(
@@ -1120,9 +1136,7 @@ export class SunsynkPowerFlowCard extends LitElement {
 			!!config.entities?.pv_total &&
 			!['none', 'no', 'zero'].includes(config.entities.pv_total);
 		const totalPV =
-			pvTotalSet && statePVTotal.isValid()
-				? statePVTotal.toNum()
-				: totalsolar;
+			pvTotalSet && statePVTotal.isValid() ? statePVTotal.toNum() : totalsolar;
 
 		const solarColour = !config.solar.dynamic_colour
 			? this.colourConvert(config.solar?.colour)
@@ -3095,6 +3109,10 @@ export class SunsynkPowerFlowCard extends LitElement {
 			batteryCount,
 		};
 
+		data.phoneLayout = this._phone;
+		if (this._phone) this.setAttribute('phone', '');
+		else this.removeAttribute('phone');
+
 		let template: TemplateResult | null = null;
 		let variantKey: 'full' | 'compact' | undefined;
 		if (this.isFullCard) {
@@ -3106,7 +3124,9 @@ export class SunsynkPowerFlowCard extends LitElement {
 		}
 
 		if (template && variantKey) {
-			return cache(keyed(variantKey, template));
+			return cache(
+				keyed(`${variantKey}${this._phone ? '-phone' : ''}`, template),
+			);
 		}
 
 		return template ?? null;

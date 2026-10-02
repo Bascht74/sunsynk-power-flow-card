@@ -26,6 +26,31 @@ export const styles: CSSResultGroup = css`
 		transform: scale(calc(100cqw / var(--flow-w)));
 	}
 
+	/* iPhone 16 Pro portrait: 402×874. The right column moves under the flow. */
+	:host([phone]) #Solar {
+		transform-box: fill-box;
+		transform-origin: 0 0;
+		transform: translate(70px, 0);
+	}
+	:host([phone]) #Load,
+	:host([phone]) #Grid,
+	:host([phone]) [id='Aux Load'] {
+		transform-box: fill-box;
+		transform-origin: 0 0;
+		transform: translate(-210px, 430px);
+	}
+	:host([phone]) #load-flow,
+	:host([phone]) #load1-flow,
+	:host([phone]) #grid-flow,
+	:host([phone]) #grid1-flow,
+	:host([phone]) #grid2-flow,
+	:host([phone]) #ne-flow,
+	:host([phone]) #ne1-flow,
+	:host([phone]) #aux-flow,
+	:host([phone]) #aux1-flow {
+		display: none;
+	}
+
 	.card {
 		border-radius: var(--ha-card-border-radius, 10px);
 		box-shadow: var(

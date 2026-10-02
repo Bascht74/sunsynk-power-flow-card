@@ -675,4 +675,6 @@ export interface DataDto {
 	stateBattery3SOH: CustomEntity;
 	stop3Colour;
 	batteryCount;
+	/** Portrait canvas for iPhone 16 Pro (402×874). */
+	phoneLayout?: boolean;
 }
