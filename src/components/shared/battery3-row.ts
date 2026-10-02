@@ -279,46 +279,52 @@ export const renderBattery3Row = (
 								data.largeFont === true,
 							)}
 							${(() => {
-								const dot = ' • ';
 								const one = (value: number, suffix: string) =>
 									`${Utils.formatNumberLocale(value, 1)}${suffix}`;
-								const volts = [
-									data.batteryVoltage,
-									data.battery3Voltage,
-									data.battery2Voltage,
-								]
-									.map((value) => one(Number(value) || 0, ' V'))
-									.join(dot);
-								const amps = [
-									data.stateBatteryCurrent,
-									data.stateBattery3Current,
-									data.stateBattery2Current,
-								]
-									.map((value) => one(value?.toNum(1) ?? 0, ' A'))
-									.join(dot);
-								const temps = [
-									data.stateBatteryTemp,
-									data.stateBattery3Temp,
-									data.stateBattery2Temp,
-								]
-									.map((value) => one(value?.toNum(1) ?? 0, '°'))
-									.join(dot);
+								const line = (parts: string[]) =>
+									parts.map(
+										(part, index) =>
+											svg`${index
+												? svg`<tspan style="font-size:13px"> • </tspan>`
+												: ''}${part}`,
+									);
+								const volts = line(
+									[
+										data.batteryVoltage,
+										data.battery3Voltage,
+										data.battery2Voltage,
+									].map((value) => one(Number(value) || 0, ' V')),
+								);
+								const amps = line(
+									[
+										data.stateBatteryCurrent,
+										data.stateBattery3Current,
+										data.stateBattery2Current,
+									].map((value) => one(value?.toNum(1) ?? 0, ' A')),
+								);
+								const temps = line(
+									[
+										data.stateBatteryTemp,
+										data.stateBattery3Temp,
+										data.stateBattery2Temp,
+									].map((value) => one(value?.toNum(1) ?? 0, '°')),
+								);
 								return svg`
 									<g id="battery_pack_readings">
 										<rect
-											x="292"
-											y="314"
-											width="210"
-											height="58"
+											x="330"
+											y="316"
+											width="186"
+											height="56"
 											rx="4.5"
 											ry="4.5"
 											fill="none"
 											stroke="${packs[0].colour}"
 											pointer-events="all"
 										/>
-										<text x="397" y="330" class="st3 st8" fill="${packs[0].colour}">${volts}</text>
-										<text x="397" y="346" class="st3 st8" fill="${packs[0].colour}">${amps}</text>
-										<text x="397" y="362" class="st3 st8" fill="${packs[0].colour}">${temps}</text>
+										<text x="423" y="332" class="st3 st8" fill="${packs[0].colour}">${volts}</text>
+										<text x="423" y="348" class="st3 st8" fill="${packs[0].colour}">${amps}</text>
+										<text x="423" y="364" class="st3 st8" fill="${packs[0].colour}">${temps}</text>
 									</g>
 								`;
 							})()}
