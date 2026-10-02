@@ -11,6 +11,21 @@ export const styles: CSSResultGroup = css`
 		padding: 5px;
 	}
 
+	.flow-scale {
+		width: 100%;
+		position: relative;
+		overflow: hidden;
+		container-type: inline-size;
+	}
+
+	.flow-scale > svg {
+		position: absolute;
+		top: 0;
+		left: 0;
+		transform-origin: top left;
+		transform: scale(calc(100cqw / var(--flow-w)));
+	}
+
 	.card {
 		border-radius: var(--ha-card-border-radius, 10px);
 		box-shadow: var(

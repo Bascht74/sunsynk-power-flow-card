@@ -23,8 +23,9 @@ export const compactCard = (
 					titleKey,
 					html`
 						<h1
-							style="text-align: center; color: ${config.title_colour ||
-							'inherit'}; font-size: ${config.title_size || '32px'};"
+							style="text-align: center; color: ${
+								config.title_colour || 'inherit'
+							}; font-size: ${config.title_size || '32px'};"
 						>
 							${config.title}
 						</h1>
@@ -32,36 +33,43 @@ export const compactCard = (
 				),
 			)
 		: '';
+	const viewWidth = config.wide ? 720 : Number(data.viewBoxWidthLite);
+	const viewHeight = config.wide ? 405 : Number(data.viewBoxHeightLite);
+	const viewX = config.wide ? 0 : data.viewBoxXLite;
+	const viewY = config.wide ? 0 : data.viewBoxYLite;
 	return html`
 		<ha-card>
 			${getDynamicStyles(data)}
 			<div class="container card">
 				${titleTemplate}
-				<svg
-					viewBox="${config.wide
-						? '0 0 720 405'
-						: `${data.viewBoxXLite} ${data.viewBoxYLite} ${data.viewBoxWidthLite} ${data.viewBoxHeightLite}`}"
-					preserveAspectRatio="xMidYMid meet"
-					height="${data.cardHeight}"
-					width="${data.cardWidth}"
-					xmlns="http://www.w3.org/2000/svg"
-					xmlns:xlink="http://www.w3.org/1999/xlink"
+				<div
+					class="flow-scale"
+					style="width: ${data.cardWidth}; aspect-ratio: ${viewWidth} / ${viewHeight}; --flow-w: ${viewWidth}px;"
 				>
-					<!-- Solar Elements -->
-					${renderSolarElements(data, config)}
+					<svg
+						viewBox="${viewX} ${viewY} ${viewWidth} ${viewHeight}"
+						preserveAspectRatio="xMidYMid meet"
+						height="${viewHeight}"
+						width="${viewWidth}"
+						xmlns="http://www.w3.org/2000/svg"
+						xmlns:xlink="http://www.w3.org/1999/xlink"
+					>
+						<!-- Solar Elements -->
+						${renderSolarElements(data, config)}
 
-					<!-- Battery Elements -->
-					${renderBatteryElements(data, config)}
+						<!-- Battery Elements -->
+						${renderBatteryElements(data, config)}
 
-					<!-- Grid Elements -->
-					${renderGridElements(data, config)}
+						<!-- Grid Elements -->
+						${renderGridElements(data, config)}
 
-					<!-- Load Elements -->
-					${renderLoadElements(data, config)}
+						<!-- Load Elements -->
+						${renderLoadElements(data, config)}
 
-					<!-- Inverter Elements -->
-					${renderInverterElements(data, inverterImg, config)}
-				</svg>
+						<!-- Inverter Elements -->
+						${renderInverterElements(data, inverterImg, config)}
+					</svg>
+				</div>
 			</div>
 		</ha-card>
 	`;
