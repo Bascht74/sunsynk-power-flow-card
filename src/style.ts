@@ -55,19 +55,6 @@ export const styles: CSSResultGroup = css`
 		transform-origin: 0 0;
 		transform: translate(-150px, 108px);
 	}
-	:host([phone]) .st3,
-	:host([phone]) .remaining-energy {
-		font-size: 10px;
-	}
-	:host([phone]) .st14 {
-		font-size: 13px;
-	}
-	:host([phone]) .st4 {
-		font-size: 16px;
-	}
-	:host([phone]) .st10 {
-		font-size: 18px;
-	}
 	:host([phone]) .st13 {
 		font-size: 26px;
 	}
