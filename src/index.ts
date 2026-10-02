@@ -94,15 +94,24 @@ export class SunsynkPowerFlowCard extends LitElement {
 		const frame = this.renderRoot?.querySelector(
 			'.flow-frame',
 		) as HTMLElement | null;
-		if (!frame) return;
-		const viewW = parseFloat(frame.style.getPropertyValue('--flow-w'));
-		const width = frame.getBoundingClientRect().width;
-		if (!viewW || !width) return;
-		frame.style.setProperty('--flow-scale', String(width / viewW));
+		const svg = frame?.querySelector('svg') as SVGSVGElement | null;
+		if (!frame || !svg) return;
+		const viewW = Number(frame.dataset.viewW);
+		const viewH = Number(frame.dataset.viewH);
+		const width = frame.clientWidth;
+		if (!viewW || !viewH || !width) return;
+		const scale = width / viewW;
+		svg.style.setProperty('width', `${viewW}px`, 'important');
+		svg.style.setProperty('height', `${viewH}px`, 'important');
+		svg.style.setProperty('transform-origin', 'top left', 'important');
+		svg.style.setProperty('transform', `scale(${scale})`, 'important');
 	};
 
 	protected updated(): void {
+		const frame = this.renderRoot?.querySelector('.flow-frame');
+		if (frame && this._frameObserver) this._frameObserver.observe(frame);
 		this._fitFrame();
+		requestAnimationFrame(() => this._fitFrame());
 	}
 
 	// Internal backing field for hass and rAF-based coalescing state
