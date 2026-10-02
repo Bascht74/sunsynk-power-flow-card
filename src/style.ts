@@ -57,16 +57,16 @@ export const styles: CSSResultGroup = css`
 	}
 	:host([phone]) .st3,
 	:host([phone]) .remaining-energy {
-		font-size: 11px;
+		font-size: 10px;
 	}
 	:host([phone]) .st14 {
-		font-size: 14px;
+		font-size: 13px;
 	}
 	:host([phone]) .st4 {
-		font-size: 17px;
+		font-size: 16px;
 	}
 	:host([phone]) .st10 {
-		font-size: 19px;
+		font-size: 18px;
 	}
 	:host([phone]) .st13 {
 		font-size: 26px;
