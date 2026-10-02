@@ -1116,9 +1116,13 @@ export class SunsynkPowerFlowCard extends LitElement {
 			pv4PowerWatts +
 			pv5PowerWatts +
 			pv6PowerWatts;
-		const totalPV = config.entities?.pv_total
-			? statePVTotal.toNum()
-			: totalsolar;
+		const pvTotalSet =
+			!!config.entities?.pv_total &&
+			!['none', 'no', 'zero'].includes(config.entities.pv_total);
+		const totalPV =
+			pvTotalSet && statePVTotal.isValid()
+				? statePVTotal.toNum()
+				: totalsolar;
 
 		const solarColour = !config.solar.dynamic_colour
 			? this.colourConvert(config.solar?.colour)

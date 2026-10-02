@@ -323,8 +323,22 @@ export const renderSolarElements = (
 				`${data.stateDayPVEnergy.toPowerString(true, data.decimalPlacesEnergy)} / ${data.totalSolarGeneration}`,
 				(e) => Utils.handlePopup(e, config.entities.day_pv_energy_108),
 			)}
-			${config.entities?.pv_total
+			${['none', 'no', 'zero'].includes(config.entities?.pv_total) ||
+			!config.entities?.pv_total
 				? svg`
+                    ${renderText(
+											'pvtotal_power',
+											87,
+											178,
+											mppts === 1,
+											`${largeFont !== true ? 'st14' : 'st4'} st8`,
+											solarColour,
+											auto_scale
+												? `${Utils.convertValue(totalPV, decimalPlaces) || 0}`
+												: `${Utils.toNum(totalPV || 0, 0)} ${UnitOfPower.WATT}`,
+											true,
+										)}`
+				: svg`
                     ${createTextWithPopup(
 											'pvtotal_power',
 											87,
@@ -333,26 +347,9 @@ export const renderSolarElements = (
 											`${largeFont !== true ? 'st14' : 'st4'} st8`,
 											solarColour,
 											auto_scale
-												? config.entities?.pv_total
-													? `${Utils.convertValueNew(totalPV, data.statePVTotal?.getUOM(), decimalPlaces)}`
-													: `${Utils.convertValue(totalPV, decimalPlaces) || 0}`
+												? `${Utils.convertValueNew(totalPV, data.statePVTotal?.getUOM(), decimalPlaces)}`
 												: `${Utils.toNum(totalPV || 0, 0)} ${UnitOfPower.WATT}`,
 											(e) => Utils.handlePopup(e, config.entities.pv_total),
-											true,
-										)}`
-				: svg`
-                    ${renderText(
-											'pvtotal_power',
-											87,
-											178,
-											mppts === 1 || !data.statePVTotal.isValid(),
-											`${largeFont !== true ? 'st14' : 'st4'} st8`,
-											solarColour,
-											auto_scale
-												? config.entities?.pv_total
-													? `${Utils.convertValueNew(totalPV, data.statePVTotal?.getUOM(), decimalPlaces)}`
-													: `${Utils.convertValue(totalPV, decimalPlaces) || 0}`
-												: `${Utils.toNum(totalPV || 0, 0)} ${UnitOfPower.WATT}`,
 											true,
 										)}`}
 			${createTextWithPopup(

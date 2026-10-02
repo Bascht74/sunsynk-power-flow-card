@@ -246,22 +246,22 @@ export const renderBattery3Row = (
 				full
 					? svg`
 							<g id="battery_total_power_three">
-								<rect
-									x="83.32"
-									y="265"
-									width="70"
-									height="30"
-									rx="4.5"
-									ry="4.5"
-									fill="none"
-									stroke="${totalColour}"
-									pointer-events="all"
-								/>
 								${totalFromEntity
 									? svg`<a
 											href="#"
 											@click=${(e) => Utils.handlePopup(e, totalEntity)}
 										>
+											<rect
+												x="83.32"
+												y="265"
+												width="70"
+												height="30"
+												rx="4.5"
+												ry="4.5"
+												fill="transparent"
+												stroke="${totalColour}"
+												pointer-events="all"
+											/>
 											<text
 												x="117.32"
 												y="282"
@@ -271,7 +271,17 @@ export const renderBattery3Row = (
 												${total}
 											</text>
 										</a>`
-									: svg`<text
+									: svg`<rect
+											x="83.32"
+											y="265"
+											width="70"
+											height="30"
+											rx="4.5"
+											ry="4.5"
+											fill="none"
+											stroke="${totalColour}"
+										/>
+										<text
 											x="117.32"
 											y="282"
 											class="${data.largeFont !== true ? 'st14' : 'st4'} st8"

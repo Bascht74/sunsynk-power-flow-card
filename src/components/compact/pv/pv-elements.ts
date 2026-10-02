@@ -623,8 +623,22 @@ export const renderSolarElements = (
 				(e) => Utils.handlePopup(e, config.entities.environment_temp),
 				true,
 			)}
-			${config.entities?.pv_total
+			${['none', 'no', 'zero'].includes(config.entities?.pv_total) ||
+			!config.entities?.pv_total
 				? svg`
+                    ${renderText(
+											'pvtotal_power',
+											238.8,
+											133.9,
+											mppts === 1,
+											`${largeFont !== true ? 'st14' : 'st4'} st8`,
+											solarColour,
+											auto_scale
+												? `${Utils.convertValue(totalPV, decimalPlaces) || 0}`
+												: `${Utils.toNum(totalPV || 0, 0)} ${UnitOfPower.WATT}`,
+											true,
+										)}`
+				: svg`
                     ${createTextWithPopup(
 											'pvtotal_power',
 											238.8,
@@ -633,26 +647,9 @@ export const renderSolarElements = (
 											`${largeFont !== true ? 'st14' : 'st4'} st8`,
 											solarColour,
 											auto_scale
-												? config.entities?.pv_total
-													? `${Utils.convertValueNew(totalPV, data.statePVTotal.getUOM(), decimalPlaces)}`
-													: `${Utils.convertValue(totalPV, decimalPlaces) || 0}`
+												? `${Utils.convertValueNew(totalPV, data.statePVTotal.getUOM(), decimalPlaces)}`
 												: `${Utils.toNum(totalPV || 0, 0)} ${UnitOfPower.WATT}`,
 											(e) => Utils.handlePopup(e, config.entities.pv_total),
-											true,
-										)}`
-				: svg`
-                    ${renderText(
-											'pvtotal_power',
-											238.8,
-											133.9,
-											mppts === 1 || !data.statePVTotal.isValid(),
-											`${largeFont !== true ? 'st14' : 'st4'} st8`,
-											solarColour,
-											auto_scale
-												? config.entities?.pv_total
-													? `${Utils.convertValueNew(totalPV, data.statePVTotal.getUOM(), decimalPlaces)}`
-													: `${Utils.convertValue(totalPV, decimalPlaces) || 0}`
-												: `${Utils.toNum(totalPV || 0, 0)} ${UnitOfPower.WATT}`,
 											true,
 										)}`}
 			${createTextWithPopup(
