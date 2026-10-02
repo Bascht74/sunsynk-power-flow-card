@@ -312,9 +312,9 @@ export const renderBattery3Row = (
 								return svg`
 									<g id="battery_pack_readings">
 										<rect
-											x="292"
+											x="287.6"
 											y="320.75"
-											width="170"
+											width="116"
 											height="50"
 											rx="4.5"
 											ry="4.5"
@@ -322,9 +322,9 @@ export const renderBattery3Row = (
 											stroke="${packs[0].colour}"
 											pointer-events="all"
 										/>
-										<text x="377" y="329.5" class="st3 st8" fill="${packs[0].colour}">${volts}</text>
-										<text x="377" y="345.75" class="st3 st8" fill="${packs[0].colour}">${amps}</text>
-										<text x="377" y="362" class="st3 st8" fill="${packs[0].colour}">${temps}</text>
+										<text x="345.6" y="329.5" class="st3 st8" fill="${packs[0].colour}">${volts}</text>
+										<text x="345.6" y="345.75" class="st3 st8" fill="${packs[0].colour}">${amps}</text>
+										<text x="345.6" y="362" class="st3 st8" fill="${packs[0].colour}">${temps}</text>
 									</g>
 								`;
 							})()}
