@@ -65,17 +65,42 @@ export const renderBatteryElements = (
 						pointer-events="all"
 						class="${data.compactMode ? '' : ''}"
 					/>
-					${renderText(
-						'battery_power_total',
-						117.32,
-						282,
-						true,
-						`${largeFont !== true ? 'st14' : 'st4'} st8`,
-						batteryColour,
-						auto_scale
-							? `${Utils.convertValue(data.batteryPowerTotal, decimalPlaces) || 0}`
-							: `${Utils.toNum(data.batteryPowerTotal || 0, 0)} ${UnitOfPower.WATT}`,
-					)}
+					${config.entities?.battery_power_total &&
+					!['none', 'no', 'zero'].includes(config.entities.battery_power_total)
+						? createTextWithPopup(
+								'battery_power_total',
+								117.32,
+								282,
+								true,
+								`${largeFont !== true ? 'st14' : 'st4'} st8`,
+								batteryColour,
+								auto_scale
+									? `${Utils.convertValue(
+											data.stateBatteryPowerTotal?.isValid()
+												? data.stateBatteryPowerTotal.toNum()
+												: data.batteryPowerTotal,
+											decimalPlaces,
+										) || 0}`
+									: `${Utils.toNum(
+											data.stateBatteryPowerTotal?.isValid()
+												? data.stateBatteryPowerTotal.toNum()
+												: data.batteryPowerTotal || 0,
+											0,
+										)} ${UnitOfPower.WATT}`,
+								(e) =>
+									Utils.handlePopup(e, config.entities.battery_power_total),
+							)
+						: renderText(
+								'battery_power_total',
+								117.32,
+								282,
+								true,
+								`${largeFont !== true ? 'st14' : 'st4'} st8`,
+								batteryColour,
+								auto_scale
+									? `${Utils.convertValue(data.batteryPowerTotal, decimalPlaces) || 0}`
+									: `${Utils.toNum(data.batteryPowerTotal || 0, 0)} ${UnitOfPower.WATT}`,
+							)}
 				</svg>
 				<svg id="battery1_icon" x="${batteryCount === 2 ? '12.25%' : '0%'}">
 					<a

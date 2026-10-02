@@ -1566,6 +1566,12 @@ export class SunSynkCardEditor
 														},
 													},
 													{
+														name: 'battery_power_total',
+														selector: {
+															entity: { device_class: SensorDeviceClass.POWER },
+														},
+													},
+													{
 														name: 'battery_current_191',
 														selector: {
 															entity: {

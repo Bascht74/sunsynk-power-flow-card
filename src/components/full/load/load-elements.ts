@@ -355,25 +355,42 @@ export const renderLoadElements = (
 				config.load.label_daily_load || localize('common.daily_load'),
 				true,
 			)}
-			${renderText(
-				'load-power-3P',
-				237,
-				142,
-				config.inverter.three_phase && !!config.entities?.load_power_L1,
-				'st3 left-align',
-				loadColour,
-				config.inverter.three_phase && config.entities?.load_power_L1
-					? `${auto_scale ? Utils.convertValue(data.loadPowerL1, decimalPlaces) || 0 : `${data.loadPowerL1 || 0}`}${
-							config.inverter.three_phase && config.entities?.load_power_L2
-								? ` | ${auto_scale ? Utils.convertValue(data.loadPowerL2, decimalPlaces) || 0 : `${data.loadPowerL2 || 0}`}`
-								: ''
-						}${
-							config.inverter.three_phase && config.entities?.load_power_L3
-								? ` | ${auto_scale ? Utils.convertValue(data.loadPowerL3, decimalPlaces) || 0 : `${data.loadPowerL3 || 0}`}`
-								: ''
-						}${auto_scale ? '' : ` ${UnitOfPower.WATT}`}`
-					: '0',
-			)}
+			${config.inverter.three_phase && config.entities?.load_power_L1
+				? svg`<text
+						id="load-power-3P"
+						x="237"
+						y="142"
+						class="st3 left-align"
+						fill="${loadColour}"
+					>
+						${[
+							['load_power_L1', data.loadPowerL1],
+							['load_power_L2', data.loadPowerL2],
+							['load_power_L3', data.loadPowerL3],
+						]
+							.filter(
+								([key]) =>
+									config.entities?.[key as string] &&
+									!['none', 'no', 'zero'].includes(
+										config.entities[key as string],
+									),
+							)
+							.map(
+								([key, watts], index) => svg`${index
+									? svg`<tspan> | </tspan>`
+									: ''}<a
+									href="#"
+									@click=${(e) =>
+										Utils.handlePopup(e, config.entities[key as string])}
+								><tspan
+									>${auto_scale
+										? Utils.convertValue(Number(watts), decimalPlaces) || 0
+										: `${watts || 0} ${UnitOfPower.WATT}`}</tspan
+								></a
+							>`,
+							)}
+					</text>`
+				: ''}
 			${renderPath(
 				'es-load1',
 				'M 409 143 L 409 135',

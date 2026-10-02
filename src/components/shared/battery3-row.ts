@@ -223,8 +223,15 @@ export const renderBattery3Row = (
 		},
 	];
 
+	const totalEntity = config.entities?.battery_power_total;
+	const totalFromEntity =
+		!!totalEntity && !['none', 'no', 'zero'].includes(totalEntity);
+	const totalWatts =
+		totalFromEntity && data.stateBatteryPowerTotal?.isValid()
+			? data.stateBatteryPowerTotal.toNum()
+			: data.batteryPowerTotal;
 	const total = powerLabel(
-		data.batteryPowerTotal,
+		totalWatts,
 		config.battery?.auto_scale !== false,
 		!!config.battery?.show_absolute,
 		data.decimalPlaces,
@@ -250,14 +257,28 @@ export const renderBattery3Row = (
 									stroke="${totalColour}"
 									pointer-events="all"
 								/>
-								<text
-									x="117.32"
-									y="282"
-									class="${data.largeFont !== true ? 'st14' : 'st4'} st8"
-									fill="${data.batteryColour}"
-								>
-									${total}
-								</text>
+								${totalFromEntity
+									? svg`<a
+											href="#"
+											@click=${(e) => Utils.handlePopup(e, totalEntity)}
+										>
+											<text
+												x="117.32"
+												y="282"
+												class="${data.largeFont !== true ? 'st14' : 'st4'} st8"
+												fill="${data.batteryColour}"
+											>
+												${total}
+											</text>
+										</a>`
+									: svg`<text
+											x="117.32"
+											y="282"
+											class="${data.largeFont !== true ? 'st14' : 'st4'} st8"
+											fill="${data.batteryColour}"
+										>
+											${total}
+										</text>`}
 							</g>
 							${leftLabels(
 								130,
@@ -281,33 +302,70 @@ export const renderBattery3Row = (
 							${(() => {
 								const one = (value: number, suffix: string) =>
 									`${Utils.formatNumberLocale(value, 1)}${suffix}`;
-								const line = (parts: string[]) =>
-									parts.map(
-										(part, index) =>
-											svg`${index
-												? svg`<tspan style="font-size:13px"> • </tspan>`
-												: ''}${part}`,
-									);
-								const volts = line(
-									[
-										data.batteryVoltage,
-										data.battery3Voltage,
-										data.battery2Voltage,
-									].map((value) => one(Number(value) || 0, ' V')),
+								const reading = (
+									entity: string | undefined,
+									text: string,
+									index: number,
+								) => {
+									const linked =
+										!!entity && !['none', 'no', 'zero'].includes(entity);
+									const value = linked
+										? svg`<a href="#" @click=${(e) => Utils.handlePopup(e, entity)}
+											><tspan>${text}</tspan></a
+										>`
+										: svg`<tspan>${text}</tspan>`;
+									return svg`${index
+										? svg`<tspan style="font-size:13px"> • </tspan>`
+										: ''}${value}`;
+								};
+								const volts = [
+									[config.entities?.battery_voltage_183, data.batteryVoltage],
+									[config.entities?.battery3_voltage_183, data.battery3Voltage],
+									[config.entities?.battery2_voltage_183, data.battery2Voltage],
+								].map(([entity, value], index) =>
+									reading(
+										entity as string,
+										one(Number(value) || 0, ' V'),
+										index,
+									),
 								);
-								const amps = line(
+								const amps = [
+									[config.entities?.battery_current_191, data.stateBatteryCurrent],
 									[
-										data.stateBatteryCurrent,
+										config.entities?.battery3_current_191,
 										data.stateBattery3Current,
-										data.stateBattery2Current,
-									].map((value) => one(value?.toNum(1) ?? 0, ' A')),
-								);
-								const temps = line(
+									],
 									[
-										data.stateBatteryTemp,
-										data.stateBattery3Temp,
-										data.stateBattery2Temp,
-									].map((value) => one(value?.toNum(1) ?? 0, '°')),
+										config.entities?.battery2_current_191,
+										data.stateBattery2Current,
+									],
+								].map(([entity, value], index) =>
+									reading(
+										entity as string,
+										one(
+											(value as { toNum?: (n: number) => number })?.toNum?.(
+												1,
+											) ?? 0,
+											' A',
+										),
+										index,
+									),
+								);
+								const temps = [
+									[config.entities?.battery_temp_182, data.stateBatteryTemp],
+									[config.entities?.battery3_temp_182, data.stateBattery3Temp],
+									[config.entities?.battery2_temp_182, data.stateBattery2Temp],
+								].map(([entity, value], index) =>
+									reading(
+										entity as string,
+										one(
+											(value as { toNum?: (n: number) => number })?.toNum?.(
+												1,
+											) ?? 0,
+											'°',
+										),
+										index,
+									),
 								);
 								return svg`
 									<g id="battery_pack_readings">
@@ -329,7 +387,18 @@ export const renderBattery3Row = (
 								`;
 							})()}
 						`
-					: svg`
+					: totalFromEntity
+						? svg`<a href="#" @click=${(e) => Utils.handlePopup(e, totalEntity)}>
+							<text
+								x="239"
+								y="292"
+								class="st14 st8"
+								fill="${data.batteryColour}"
+							>
+								${total}
+							</text>
+						</a>`
+						: svg`
 							<text
 								x="239"
 								y="292"

@@ -289,6 +289,7 @@ export interface CardConfigEntities {
 	battery_voltage_183: string;
 	battery_soc_184: string;
 	battery_power_190: string;
+	battery_power_total: string;
 	battery_current_191: string;
 	battery_rated_capacity: string;
 	battery_soh: string;
@@ -617,6 +618,7 @@ export interface DataDto {
 	statePV5Power: CustomEntity;
 	statePV6Power: CustomEntity;
 	statePVTotal: CustomEntity;
+	stateBatteryPowerTotal: CustomEntity;
 	statePV1Power: CustomEntity;
 	stateAuxLoad1Extra: CustomEntity;
 	stateAuxLoad2Extra: CustomEntity;

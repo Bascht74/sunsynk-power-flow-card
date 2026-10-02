@@ -692,6 +692,9 @@ export class SunsynkPowerFlowCard extends LitElement {
 			state: 'undefined',
 		});
 		const statePVTotal = this.getEntity('entities.pv_total');
+		const stateBatteryPowerTotal = this.getEntity(
+			'entities.battery_power_total',
+		);
 		const stateTotalPVGeneration = this.getEntity(
 			'entities.total_pv_generation',
 		);
@@ -2987,6 +2990,7 @@ export class SunsynkPowerFlowCard extends LitElement {
 			stateDayBatteryCharge,
 			stateDayGridExport,
 			statePVTotal,
+			stateBatteryPowerTotal,
 			statePV1Power,
 			statePV2Power,
 			statePV3Power,
