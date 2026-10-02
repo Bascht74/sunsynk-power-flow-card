@@ -55,27 +55,21 @@ export const styles: CSSResultGroup = css`
 		transform-origin: 0 0;
 		transform: translate(-150px, 108px);
 	}
-	/* Undo the canvas shrink so type stays the desktop size. */
-	:host([phone]) text {
-		transform-box: fill-box;
-		transform-origin: center;
-		transform: scale(calc(var(--flow-w) / 100cqw));
-	}
 	:host([phone]) .st3,
 	:host([phone]) .remaining-energy {
-		font-size: 13px;
+		font-size: 11px;
 	}
 	:host([phone]) .st14 {
-		font-size: 16px;
+		font-size: 14px;
 	}
 	:host([phone]) .st4 {
-		font-size: 20px;
+		font-size: 17px;
 	}
 	:host([phone]) .st10 {
-		font-size: 22px;
+		font-size: 19px;
 	}
 	:host([phone]) .st13 {
-		font-size: 30px;
+		font-size: 26px;
 	}
 
 	.card {
