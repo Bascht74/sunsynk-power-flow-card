@@ -508,6 +508,7 @@ export interface DataDto {
 	showAux;
 	nonessentialIcon;
 	showNonessential;
+	showEssential;
 	auxStatus;
 	nonessentialLoads;
 	additionalAuxLoad;
