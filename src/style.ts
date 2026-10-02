@@ -26,6 +26,10 @@ export const styles: CSSResultGroup = css`
 		transform: scale(calc(100cqw / var(--flow-w)));
 	}
 
+	.flow-scale foreignObject > div {
+		position: relative !important;
+	}
+
 	/* iPhone 16 Pro portrait: 402×874. The right column moves under the flow. */
 	:host([phone]) #Solar {
 		transform-box: fill-box;

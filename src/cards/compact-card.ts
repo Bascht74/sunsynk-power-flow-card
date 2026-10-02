@@ -33,43 +33,36 @@ export const compactCard = (
 				),
 			)
 		: '';
-	const viewWidth = config.wide ? 720 : Number(data.viewBoxWidthLite);
-	const viewHeight = config.wide ? 405 : Number(data.viewBoxHeightLite);
-	const viewX = config.wide ? 0 : data.viewBoxXLite;
-	const viewY = config.wide ? 0 : data.viewBoxYLite;
 	return html`
 		<ha-card>
 			${getDynamicStyles(data)}
 			<div class="container card">
 				${titleTemplate}
-				<div
-					class="flow-scale"
-					style="width: ${data.cardWidth}; aspect-ratio: ${viewWidth} / ${viewHeight}; --flow-w: ${viewWidth}px;"
+				<svg
+					viewBox="${config.wide
+						? '0 0 720 405'
+						: `${data.viewBoxXLite} ${data.viewBoxYLite} ${data.viewBoxWidthLite} ${data.viewBoxHeightLite}`}"
+					preserveAspectRatio="xMidYMid meet"
+					height="${data.cardHeight}"
+					width="${data.cardWidth}"
+					xmlns="http://www.w3.org/2000/svg"
+					xmlns:xlink="http://www.w3.org/1999/xlink"
 				>
-					<svg
-						viewBox="${viewX} ${viewY} ${viewWidth} ${viewHeight}"
-						preserveAspectRatio="xMidYMid meet"
-						height="${viewHeight}"
-						width="${viewWidth}"
-						xmlns="http://www.w3.org/2000/svg"
-						xmlns:xlink="http://www.w3.org/1999/xlink"
-					>
-						<!-- Solar Elements -->
-						${renderSolarElements(data, config)}
+					<!-- Solar Elements -->
+					${renderSolarElements(data, config)}
 
-						<!-- Battery Elements -->
-						${renderBatteryElements(data, config)}
+					<!-- Battery Elements -->
+					${renderBatteryElements(data, config)}
 
-						<!-- Grid Elements -->
-						${renderGridElements(data, config)}
+					<!-- Grid Elements -->
+					${renderGridElements(data, config)}
 
-						<!-- Load Elements -->
-						${renderLoadElements(data, config)}
+					<!-- Load Elements -->
+					${renderLoadElements(data, config)}
 
-						<!-- Inverter Elements -->
-						${renderInverterElements(data, inverterImg, config)}
-					</svg>
-				</div>
+					<!-- Inverter Elements -->
+					${renderInverterElements(data, inverterImg, config)}
+				</svg>
 			</div>
 		</ha-card>
 	`;
