@@ -89,6 +89,21 @@ export class SunsynkPowerFlowCard extends LitElement {
 	private _onVisibilityChange?: () => void;
 	private _animationsPaused = false;
 	private _isVisible = true;
+	private _frameObserver?: ResizeObserver;
+	private _fitFrame = () => {
+		const frame = this.renderRoot?.querySelector(
+			'.flow-frame',
+		) as HTMLElement | null;
+		if (!frame) return;
+		const viewW = parseFloat(frame.style.getPropertyValue('--flow-w'));
+		const width = frame.getBoundingClientRect().width;
+		if (!viewW || !width) return;
+		frame.style.setProperty('--flow-scale', String(width / viewW));
+	};
+
+	protected updated(): void {
+		this._fitFrame();
+	}
 
 	// Internal backing field for hass and rAF-based coalescing state
 	private _hass?: HomeAssistant;
@@ -222,11 +237,18 @@ export class SunsynkPowerFlowCard extends LitElement {
 			);
 			this._onVisibilityChange = undefined;
 		}
+		if (this._frameObserver) {
+			this._frameObserver.disconnect();
+			this._frameObserver = undefined;
+		}
 		super.disconnectedCallback();
 	}
 
 	public connectedCallback(): void {
 		super.connectedCallback();
+		if (this._frameObserver) this._frameObserver.disconnect();
+		this._frameObserver = new ResizeObserver(() => this._fitFrame());
+		this._frameObserver.observe(this);
 		// Observe visibility of the card element in the viewport
 		if (this._intersection) this._intersection.disconnect();
 		this._intersection = new IntersectionObserver(

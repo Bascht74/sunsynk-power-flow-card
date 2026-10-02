@@ -48,7 +48,7 @@ export const compactCard = (
 				${titleTemplate}
 				<div
 					class="flow-frame"
-					style="width: ${frameWidth}; aspect-ratio: ${viewW} / ${viewH}; margin-inline: auto; --flow-w: ${viewW}px;"
+					style="width: ${frameWidth}; aspect-ratio: ${viewW} / ${viewH}; margin-inline: auto; --flow-w: ${viewW}px; --flow-h: ${viewH}px; --flow-scale: 1;"
 				>
 					<svg
 						viewBox="${viewX} ${viewY} ${viewW} ${viewH}"

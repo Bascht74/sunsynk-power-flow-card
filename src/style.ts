@@ -21,8 +21,11 @@ export const styles: CSSResultGroup = css`
 		position: absolute;
 		top: 0;
 		left: 0;
+		width: var(--flow-w) !important;
+		height: var(--flow-h) !important;
+		max-width: none !important;
 		transform-origin: top left;
-		transform: scale(calc(100cqw / var(--flow-w)));
+		transform: scale(var(--flow-scale, 1));
 	}
 
 	.flow-frame foreignObject > div {
