@@ -140,6 +140,40 @@ export class Utils {
 
 	private static isPopupOpen = false;
 
+	static usableEntities(ids: Array<string | undefined | null>): string[] {
+		const skip = new Set(['none', 'no', 'zero', '']);
+		const out: string[] = [];
+		for (const id of ids) {
+			if (!id || skip.has(id) || out.includes(id)) {
+				continue;
+			}
+			out.push(id);
+		}
+		return out;
+	}
+
+	/**
+	 * Relative history URL for the current Home Assistant instance.
+	 * Entities come from the card config. Missing or placeholder values
+	 * are left out, so another installation does not get a broken link.
+	 * The window is local midnight yesterday through now.
+	 */
+	static historyPath(ids: Array<string | undefined | null>): string {
+		const entities = Utils.usableEntities(ids);
+		if (!entities.length) {
+			return '';
+		}
+		const end = new Date();
+		const start = new Date(end);
+		start.setDate(start.getDate() - 1);
+		start.setHours(0, 0, 0, 0);
+		const params = new URLSearchParams();
+		params.set('entity_id', entities.join(','));
+		params.set('start_date', start.toISOString());
+		params.set('end_date', end.toISOString());
+		return `/history?${params.toString()}`;
+	}
+
 	static handlePopup(event, entityId) {
 		if (!entityId) {
 			return;

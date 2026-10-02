@@ -123,14 +123,20 @@ const leftLabels = (
 	x: number,
 	y: number,
 	colour: string,
-	socLine: string,
+	shutdownText: string,
+	socText: string,
+	onSoc: ((e) => void) | null,
 	duration: string,
 	runtime: string,
 	showDuration: boolean,
 	largeFont: boolean,
 ) => svg`
 	<text x="${x}" y="${y}" class="st13 st8 right-align" fill="${colour}">
-		${socLine}
+		${shutdownText}${shutdownText && socText ? ' | ' : ''}${
+			onSoc
+				? svg`<a href="#" @click=${onSoc}><tspan>${socText}</tspan></a>`
+				: svg`<tspan>${socText}</tspan>`
+		}
 	</text>
 	<text
 		x="${x}"
@@ -246,8 +252,9 @@ export const renderBattery3Row = (
 				full
 					? svg`
 							<g id="battery_total_power_three">
-								${totalFromEntity
-									? svg`<a
+								${
+									totalFromEntity
+										? svg`<a
 											href="#"
 											@click=${(e) => Utils.handlePopup(e, totalEntity)}
 										>
@@ -271,7 +278,7 @@ export const renderBattery3Row = (
 												${total}
 											</text>
 										</a>`
-									: svg`<rect
+										: svg`<rect
 											x="83.32"
 											y="265"
 											width="70"
@@ -288,27 +295,45 @@ export const renderBattery3Row = (
 											fill="${data.batteryColour}"
 										>
 											${total}
-										</text>`}
+										</text>`
+								}
 							</g>
-							${leftLabels(
-								130,
-								328,
-								packs[0].colour,
-								packs[0].soc?.isValid()
-									? `${Utils.formatNumberLocale(packs[0].shutdown || 0, 0)}% | ${Utils.formatNumberLocale(packs[0].soc.toNum(0), 0)}%`
-									: '',
-								packs[0].duration || '',
-								runtimeText(
-									packs[0].energy,
-									packs[0].power,
-									!!packs[0].cfg?.invert_flow,
-									!!packs[0].floating,
-									packs[0].capacity,
-									packs[0].formatted || '',
-								),
-								packs[0].energy !== 0 && !packs[0].floating && packs[0].power !== 0,
-								data.largeFont === true,
-							)}
+							${(() => {
+								const socHistory = Utils.historyPath([
+									config.entities?.battery_soc_184,
+									config.entities?.battery2_soc_184,
+									config.entities?.battery3_soc_184,
+								]);
+								const shutdownText = packs[0].soc?.isValid()
+									? `${Utils.formatNumberLocale(packs[0].shutdown || 0, 0)}%`
+									: '';
+								const socText = packs[0].soc?.isValid()
+									? `${Utils.formatNumberLocale(packs[0].soc.toNum(0), 0)}%`
+									: '';
+								return leftLabels(
+									130,
+									328,
+									packs[0].colour,
+									shutdownText,
+									socText,
+									socHistory
+										? (e) => Utils.handleNavigation(e, socHistory)
+										: null,
+									packs[0].duration || '',
+									runtimeText(
+										packs[0].energy,
+										packs[0].power,
+										!!packs[0].cfg?.invert_flow,
+										!!packs[0].floating,
+										packs[0].capacity,
+										packs[0].formatted || '',
+									),
+									packs[0].energy !== 0 &&
+										!packs[0].floating &&
+										packs[0].power !== 0,
+									data.largeFont === true,
+								);
+							})()}
 							${(() => {
 								const one = (value: number, suffix: string) =>
 									`${Utils.formatNumberLocale(value, 1)}${suffix}`;
@@ -324,9 +349,9 @@ export const renderBattery3Row = (
 											><tspan>${text}</tspan></a
 										>`
 										: svg`<tspan>${text}</tspan>`;
-									return svg`${index
-										? svg`<tspan style="font-size:13px"> • </tspan>`
-										: ''}${value}`;
+									return svg`${
+										index ? svg`<tspan style="font-size:13px"> • </tspan>` : ''
+									}${value}`;
 								};
 								const volts = [
 									[config.entities?.battery_voltage_183, data.batteryVoltage],
@@ -340,7 +365,10 @@ export const renderBattery3Row = (
 									),
 								);
 								const amps = [
-									[config.entities?.battery_current_191, data.stateBatteryCurrent],
+									[
+										config.entities?.battery_current_191,
+										data.stateBatteryCurrent,
+									],
 									[
 										config.entities?.battery3_current_191,
 										data.stateBattery3Current,
@@ -419,34 +447,33 @@ export const renderBattery3Row = (
 							</text>
 						`
 			}
-			${packs.map(
-				(pack, index) =>
-					oneBattery(
-						xs[index],
-						icon,
-						iconY,
-						pack.colour,
-						powerLabel(
-							pack.power,
-							pack.cfg?.auto_scale !== false,
-							!!pack.cfg?.show_absolute,
-							data.decimalPlaces,
-						),
-						remainLabel(pack.energy, pack.soc, pack.cfg, pack.shutdown),
-						pack.soc?.isValid()
-							? `${Utils.formatNumberLocale(pack.soc.toNum(0), 0)}%`
-							: '',
-						pack.icon,
-						pack.shell,
-						pack.charge,
-						pack.stop,
-						!!pack.cfg?.linear_gradient,
-						`sLg-row-${index}`,
-						(e) =>
-							pack.cfg?.navigate
-								? Utils.handleNavigation(e, pack.cfg.navigate)
-								: Utils.handlePopup(e, pack.powerEntity || pack.socEntity),
+			${packs.map((pack, index) =>
+				oneBattery(
+					xs[index],
+					icon,
+					iconY,
+					pack.colour,
+					powerLabel(
+						pack.power,
+						pack.cfg?.auto_scale !== false,
+						!!pack.cfg?.show_absolute,
+						data.decimalPlaces,
 					),
+					remainLabel(pack.energy, pack.soc, pack.cfg, pack.shutdown),
+					pack.soc?.isValid()
+						? `${Utils.formatNumberLocale(pack.soc.toNum(0), 0)}%`
+						: '',
+					pack.icon,
+					pack.shell,
+					pack.charge,
+					pack.stop,
+					!!pack.cfg?.linear_gradient,
+					`sLg-row-${index}`,
+					(e) =>
+						pack.cfg?.navigate
+							? Utils.handleNavigation(e, pack.cfg.navigate)
+							: Utils.handlePopup(e, pack.powerEntity || pack.socEntity),
+				),
 			)}
 			${
 				mode === 'compact'

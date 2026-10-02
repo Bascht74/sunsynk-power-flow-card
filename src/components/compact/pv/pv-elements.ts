@@ -29,14 +29,24 @@ export const renderSolarElements = (
 
 	const { auto_scale, efficiency, mppts, display_mode, invert_flow } =
 		config.solar;
+	const pvHistory = Utils.historyPath(
+		[
+			config.entities?.pv1_power_186,
+			config.entities?.pv2_power_187,
+			config.entities?.pv3_power_188,
+			config.entities?.pv4_power_189,
+			config.entities?.pv5_power,
+			config.entities?.pv6_power,
+		].slice(0, Math.min(Math.max(mppts || 1, 1), 6)),
+	);
 
 	return html`
 		<!-- Solar Elements -->
 		<svg
 			id="Solar"
-			style="overflow: visible; display: ${!config.show_solar
-				? 'none'
-				: 'inline'};"
+			style="overflow: visible; display: ${
+				!config.show_solar ? 'none' : 'inline'
+			};"
 			x="${config.wide ? '10%' : '0%'}"
 		>
 			${renderPV('pvtotal', '205', '116.5', data, config)}
@@ -46,11 +56,11 @@ export const renderSolarElements = (
 			${renderPV('pv4', '330', '54.5', data, config)}
 			<svg
 				id="PV5"
-				style="overflow: visible; display: ${config.show_solar &&
-				config.wide &&
-				[5, 6].includes(mppts)
-					? 'inline'
-					: 'none'};"
+				style="overflow: visible; display: ${
+					config.show_solar && config.wide && [5, 6].includes(mppts)
+						? 'inline'
+						: 'none'
+				};"
 				x="-10.5%"
 			>
 				${renderPV('pv5', '78', '54.5', data, config)}
@@ -131,11 +141,9 @@ export const renderSolarElements = (
 			</svg>
 			<svg
 				id="PV6"
-				style="overflow: visible; display: ${config.show_solar &&
-				config.wide &&
-				mppts === 6
-					? 'inline'
-					: 'none'};"
+				style="overflow: visible; display: ${
+					config.show_solar && config.wide && mppts === 6 ? 'inline' : 'none'
+				};"
 				x="10.5%"
 			>
 				${renderPV('pv6', '330', '54.5', data, config)}
@@ -321,16 +329,30 @@ export const renderSolarElements = (
 				`${data.PV4Efficiency}%`,
 				true,
 			)}
-			${renderText(
-				'total_pv_efficiency',
-				215,
-				156,
-				mppts === 1,
-				[2, 3].includes(efficiency) ? 'st3 st8' : 'st12',
-				solarColour,
-				`${data.totalPVEfficiency}%`,
-				true,
-			)}
+			${
+				pvHistory
+					? createTextWithPopup(
+							'total_pv_efficiency',
+							215,
+							156,
+							mppts === 1,
+							[2, 3].includes(efficiency) ? 'st3 st8' : 'st12',
+							solarColour,
+							`${data.totalPVEfficiency}%`,
+							(e) => Utils.handleNavigation(e, pvHistory),
+							true,
+						)
+					: renderText(
+							'total_pv_efficiency',
+							215,
+							156,
+							mppts === 1,
+							[2, 3].includes(efficiency) ? 'st3 st8' : 'st12',
+							solarColour,
+							`${data.totalPVEfficiency}%`,
+							true,
+						)
+			}
 			${renderPVFlow(
 				'pv1',
 				mppts === 1
@@ -388,8 +410,9 @@ export const renderSolarElements = (
 				mppts === 1 ? 'st12' : '',
 				'1;0',
 			)}
-			${config.solar?.navigate
-				? svg`
+			${
+				config.solar?.navigate
+					? svg`
                     <a href="#" @click=${(e) => Utils.handleNavigation(e, config.solar.navigate)}>
                         <svg id="sun" x="154" y="10" width="40" height="40"
                             viewBox="0 0 24 24">
@@ -397,12 +420,13 @@ export const renderSolarElements = (
                                 d="${icons.sun}"/>
                         </svg>
                     </a>`
-				: svg`
+					: svg`
                     <svg id="sun" x="154" y="10" width="40" height="40"
                         viewBox="0 0 24 24">
                         <path fill="${solarColour}"
                             d="${icons.sun}"/>
-                    </svg>`}
+                    </svg>`
+			}
 			<a
 				href="#"
 				@click=${(e) => Utils.handlePopup(e, config.entities.solar_sell_247)}
@@ -416,13 +440,15 @@ export const renderSolarElements = (
 					viewBox="0 0 30 30"
 				>
 					<path
-						display="${!config.entities.solar_sell_247 ||
-						data.stateSolarSell.state === 'off' ||
-						data.stateSolarSell.state === '0' ||
-						!config.show_solar ||
-						!['1', 'on'].includes(data.stateSolarSell.state)
-							? 'none'
-							: ''}"
+						display="${
+							!config.entities.solar_sell_247 ||
+							data.stateSolarSell.state === 'off' ||
+							data.stateSolarSell.state === '0' ||
+							!config.show_solar ||
+							!['1', 'on'].includes(data.stateSolarSell.state)
+								? 'none'
+								: ''
+						}"
 						fill="${solarColour}"
 						d="${icons.solarSellOn}"
 					/>
@@ -436,13 +462,15 @@ export const renderSolarElements = (
 					viewBox="0 0 30 30"
 				>
 					<path
-						display="${!config.entities.solar_sell_247 ||
-						data.stateSolarSell.state === 'on' ||
-						data.stateSolarSell.state === '1' ||
-						!config.show_solar ||
-						!['0', 'off'].includes(data.stateSolarSell.state)
-							? 'none'
-							: ''}"
+						display="${
+							!config.entities.solar_sell_247 ||
+							data.stateSolarSell.state === 'on' ||
+							data.stateSolarSell.state === '1' ||
+							!config.show_solar ||
+							!['0', 'off'].includes(data.stateSolarSell.state)
+								? 'none'
+								: ''
+						}"
 						fill="${solarColour}"
 						d="${icons.solarSellOff}"
 					/>
@@ -623,9 +651,10 @@ export const renderSolarElements = (
 				(e) => Utils.handlePopup(e, config.entities.environment_temp),
 				true,
 			)}
-			${['none', 'no', 'zero'].includes(config.entities?.pv_total) ||
-			!config.entities?.pv_total
-				? svg`
+			${
+				['none', 'no', 'zero'].includes(config.entities?.pv_total) ||
+				!config.entities?.pv_total
+					? svg`
                     ${renderText(
 											'pvtotal_power',
 											238.8,
@@ -638,7 +667,7 @@ export const renderSolarElements = (
 												: `${Utils.toNum(totalPV || 0, 0)} ${UnitOfPower.WATT}`,
 											true,
 										)}`
-				: svg`
+					: svg`
                     ${createTextWithPopup(
 											'pvtotal_power',
 											238.8,
@@ -651,7 +680,8 @@ export const renderSolarElements = (
 												: `${Utils.toNum(totalPV || 0, 0)} ${UnitOfPower.WATT}`,
 											(e) => Utils.handlePopup(e, config.entities.pv_total),
 											true,
-										)}`}
+										)}`
+			}
 			${createTextWithPopup(
 				'pv1_power_186',
 				mppts === 1 ? '238.8' : '188.1',
