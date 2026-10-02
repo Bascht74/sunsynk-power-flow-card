@@ -52,7 +52,7 @@ export const renderBatteryElements = (
 					};"
 				>
 					<rect
-						x="84.08"
+						x="83.32"
 						y="265"
 						width="70"
 						height="30"
@@ -67,7 +67,7 @@ export const renderBatteryElements = (
 					/>
 					${renderText(
 						'battery_power_total',
-						118.08,
+						117.32,
 						282,
 						true,
 						`${largeFont !== true ? 'st14' : 'st4'} st8`,
@@ -1181,7 +1181,7 @@ export const renderBatteryElements = (
 					'bat-line',
 					config.wide
 						? batteryCount === 3 || batteryCount === 2
-							? 'M 279 280 L 154.08 281'
+							? 'M 279 280 L 153.32 281'
 							: 'M 279 280 L 96 280 Q 86 280 86 290 L 86 297'
 						: 'M 155 280 L 96 280 Q 86 280 86 290 L 86 297',
 					true,
