@@ -11,58 +11,6 @@ export const styles: CSSResultGroup = css`
 		padding: 5px;
 	}
 
-	.flow-scale {
-		width: 100%;
-		position: relative;
-		overflow: hidden;
-		container-type: inline-size;
-	}
-
-	.flow-scale > svg {
-		position: absolute;
-		top: 0;
-		left: 0;
-		transform-origin: top left;
-		transform: scale(calc(100cqw / var(--flow-w)));
-	}
-
-	.flow-scale foreignObject > div {
-		position: relative !important;
-	}
-
-	/* iPhone 16 Pro portrait: 402×874. The right column moves under the flow. */
-	:host([phone]) #Solar {
-		transform-box: fill-box;
-		transform-origin: 0 0;
-		transform: translate(70px, 0);
-	}
-	:host([phone]) #Load,
-	:host([phone]) #Grid,
-	:host([phone]) [id='Aux Load'] {
-		transform-box: fill-box;
-		transform-origin: 0 0;
-		transform: translate(-210px, 430px);
-	}
-	:host([phone]) #load-flow,
-	:host([phone]) #load1-flow,
-	:host([phone]) #grid-flow,
-	:host([phone]) #grid1-flow,
-	:host([phone]) #grid2-flow,
-	:host([phone]) #ne-flow,
-	:host([phone]) #ne1-flow,
-	:host([phone]) #aux-flow,
-	:host([phone]) #aux1-flow {
-		display: none;
-	}
-	:host([phone]) #battery_pack_readings {
-		transform-box: fill-box;
-		transform-origin: 0 0;
-		transform: translate(-150px, 108px);
-	}
-	:host([phone]) .st13 {
-		font-size: 26px;
-	}
-
 	.card {
 		border-radius: var(--ha-card-border-radius, 10px);
 		box-shadow: var(

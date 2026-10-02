@@ -32,63 +32,48 @@ export const fullCard = (
 				),
 			)
 		: '';
-	const phone = data.phoneLayout === true;
-	const desktopViewBox = config.wide
-		? data.batteryCount === 3
-			? '0 0 720 430'
-			: '0 0 720 405'
-		: '0 0 483 405';
-	const svgBody = html`
-		<!-- Solar Elements -->
-		${renderSolarElements(data, config)}
-
-		<!-- Battery Elements -->
-		${renderBatteryElements(data, config)}
-
-		<!-- Grid Elements -->
-		${renderGridElements(data, config)}
-
-		<!-- Load Elements -->
-		${renderLoadElements(data, config)}
-
-		<!-- AUX Elements -->
-		${renderAuxLoadElements(data, config)}
-
-		<!-- Inverter Elements -->
-		${renderInverterElements(data, inverterImg, config)}
-	`;
-	const graphic = phone
-		? html`<div
-				class="flow-scale"
-				style="width: ${data.cardWidth}; aspect-ratio: 402 / 874; --flow-w: 402px;"
-			>
-				<svg
-					viewBox="0 0 402 874"
-					preserveAspectRatio="xMidYMid meet"
-					height="874"
-					width="402"
-					xmlns="http://www.w3.org/2000/svg"
-					xmlns:xlink="http://www.w3.org/1999/xlink"
-				>
-					${svgBody}
-				</svg>
-			</div>`
-		: html`<svg
-				viewBox="${desktopViewBox}"
-				preserveAspectRatio="xMidYMid meet"
-				height="${data.cardHeight}"
-				width="${data.cardWidth}"
-				xmlns="http://www.w3.org/2000/svg"
-				xmlns:xlink="http://www.w3.org/1999/xlink"
-			>
-				${svgBody}
-			</svg>`;
+	const viewW = config.wide ? 720 : 483;
+	const viewH = config.wide && data.batteryCount === 3 ? 430 : 405;
+	const frameWidth =
+		!data.cardWidth || data.cardWidth === '100%'
+			? `min(100%, calc((100svh - 96px) * ${viewW} / ${viewH}))`
+			: data.cardWidth;
 	return html`
 		<ha-card>
 			${getDynamicStyles(data)}
 			<div class="container card">
 				${titleTemplate}
-				${graphic}
+				<div
+					style="width: ${frameWidth}; aspect-ratio: ${viewW} / ${viewH}; margin-inline: auto;"
+				>
+					<svg
+						viewBox="0 0 ${viewW} ${viewH}"
+						preserveAspectRatio="xMidYMid meet"
+						height="100%"
+						width="100%"
+						style="display: block;"
+						xmlns="http://www.w3.org/2000/svg"
+						xmlns:xlink="http://www.w3.org/1999/xlink"
+					>
+						<!-- Solar Elements -->
+						${renderSolarElements(data, config)}
+
+						<!-- Battery Elements -->
+						${renderBatteryElements(data, config)}
+
+						<!-- Grid Elements -->
+						${renderGridElements(data, config)}
+
+						<!-- Load Elements -->
+						${renderLoadElements(data, config)}
+
+						<!-- AUX Elements -->
+						${renderAuxLoadElements(data, config)}
+
+						<!-- Inverter Elements -->
+						${renderInverterElements(data, inverterImg, config)}
+					</svg>
+				</div>
 			</div>
 		</ha-card>
 	`;

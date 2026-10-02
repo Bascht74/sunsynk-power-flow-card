@@ -33,36 +33,47 @@ export const compactCard = (
 				),
 			)
 		: '';
+	const viewW = config.wide ? 720 : Number(data.viewBoxWidthLite);
+	const viewH = config.wide ? 405 : Number(data.viewBoxHeightLite);
+	const viewX = config.wide ? 0 : data.viewBoxXLite;
+	const viewY = config.wide ? 0 : data.viewBoxYLite;
+	const frameWidth =
+		!data.cardWidth || data.cardWidth === '100%'
+			? `min(100%, calc((100svh - 96px) * ${viewW} / ${viewH}))`
+			: data.cardWidth;
 	return html`
 		<ha-card>
 			${getDynamicStyles(data)}
 			<div class="container card">
 				${titleTemplate}
-				<svg
-					viewBox="${config.wide
-						? '0 0 720 405'
-						: `${data.viewBoxXLite} ${data.viewBoxYLite} ${data.viewBoxWidthLite} ${data.viewBoxHeightLite}`}"
-					preserveAspectRatio="xMidYMid meet"
-					height="${data.cardHeight}"
-					width="${data.cardWidth}"
-					xmlns="http://www.w3.org/2000/svg"
-					xmlns:xlink="http://www.w3.org/1999/xlink"
+				<div
+					style="width: ${frameWidth}; aspect-ratio: ${viewW} / ${viewH}; margin-inline: auto;"
 				>
-					<!-- Solar Elements -->
-					${renderSolarElements(data, config)}
+					<svg
+						viewBox="${viewX} ${viewY} ${viewW} ${viewH}"
+						preserveAspectRatio="xMidYMid meet"
+						height="100%"
+						width="100%"
+						style="display: block;"
+						xmlns="http://www.w3.org/2000/svg"
+						xmlns:xlink="http://www.w3.org/1999/xlink"
+					>
+						<!-- Solar Elements -->
+						${renderSolarElements(data, config)}
 
-					<!-- Battery Elements -->
-					${renderBatteryElements(data, config)}
+						<!-- Battery Elements -->
+						${renderBatteryElements(data, config)}
 
-					<!-- Grid Elements -->
-					${renderGridElements(data, config)}
+						<!-- Grid Elements -->
+						${renderGridElements(data, config)}
 
-					<!-- Load Elements -->
-					${renderLoadElements(data, config)}
+						<!-- Load Elements -->
+						${renderLoadElements(data, config)}
 
-					<!-- Inverter Elements -->
-					${renderInverterElements(data, inverterImg, config)}
-				</svg>
+						<!-- Inverter Elements -->
+						${renderInverterElements(data, inverterImg, config)}
+					</svg>
+				</div>
 			</div>
 		</ha-card>
 	`;
