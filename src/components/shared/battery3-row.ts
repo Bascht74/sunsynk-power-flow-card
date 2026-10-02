@@ -260,7 +260,7 @@ export const renderBattery3Row = (
 								</text>
 							</g>
 							${leftLabels(
-								138,
+								114,
 								328,
 								packs[0].colour,
 								packs[0].soc?.isValid()
@@ -312,7 +312,7 @@ export const renderBattery3Row = (
 								return svg`
 									<g id="battery_pack_readings">
 										<rect
-											x="330"
+											x="290"
 											y="316"
 											width="186"
 											height="56"
@@ -322,9 +322,9 @@ export const renderBattery3Row = (
 											stroke="${packs[0].colour}"
 											pointer-events="all"
 										/>
-										<text x="423" y="332" class="st3 st8" fill="${packs[0].colour}">${volts}</text>
-										<text x="423" y="348" class="st3 st8" fill="${packs[0].colour}">${amps}</text>
-										<text x="423" y="364" class="st3 st8" fill="${packs[0].colour}">${temps}</text>
+										<text x="383" y="332" class="st3 st8" fill="${packs[0].colour}">${volts}</text>
+										<text x="383" y="348" class="st3 st8" fill="${packs[0].colour}">${amps}</text>
+										<text x="383" y="364" class="st3 st8" fill="${packs[0].colour}">${temps}</text>
 									</g>
 								`;
 							})()}
