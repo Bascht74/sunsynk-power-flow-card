@@ -278,6 +278,50 @@ export const renderBattery3Row = (
 								packs[0].energy !== 0 && !packs[0].floating && packs[0].power !== 0,
 								data.largeFont === true,
 							)}
+							${(() => {
+								const dot = ' • ';
+								const one = (value: number, suffix: string) =>
+									`${Utils.formatNumberLocale(value, 1)}${suffix}`;
+								const volts = [
+									data.batteryVoltage,
+									data.battery3Voltage,
+									data.battery2Voltage,
+								]
+									.map((value) => one(Number(value) || 0, ' V'))
+									.join(dot);
+								const amps = [
+									data.stateBatteryCurrent,
+									data.stateBattery3Current,
+									data.stateBattery2Current,
+								]
+									.map((value) => one(value?.toNum(1) ?? 0, ' A'))
+									.join(dot);
+								const temps = [
+									data.stateBatteryTemp,
+									data.stateBattery3Temp,
+									data.stateBattery2Temp,
+								]
+									.map((value) => one(value?.toNum(1) ?? 0, '°'))
+									.join(dot);
+								return svg`
+									<g id="battery_pack_readings">
+										<rect
+											x="292"
+											y="314"
+											width="210"
+											height="58"
+											rx="4.5"
+											ry="4.5"
+											fill="none"
+											stroke="${packs[0].colour}"
+											pointer-events="all"
+										/>
+										<text x="397" y="330" class="st3 st8" fill="${packs[0].colour}">${volts}</text>
+										<text x="397" y="346" class="st3 st8" fill="${packs[0].colour}">${amps}</text>
+										<text x="397" y="362" class="st3 st8" fill="${packs[0].colour}">${temps}</text>
+									</g>
+								`;
+							})()}
 						`
 					: svg`
 							<text

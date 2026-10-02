@@ -1434,7 +1434,7 @@ export class SunsynkPowerFlowCard extends LitElement {
 		let maximumSOC3 = stateSOCEndOfCharge3.toNum() || maximumSOC;
 		maximumSOC3 = Math.max(50, Math.min(maximumSOC3, 100));
 
-		const batteryPowerTotal =
+		let batteryPowerTotal =
 			batteryCount === 3
 				? batteryPower + battery2Power + battery3Power
 				: batteryCount === 2
@@ -1636,6 +1636,21 @@ export class SunsynkPowerFlowCard extends LitElement {
 			batteryEnergy +
 			battery2Energy +
 			(batteryCount === 3 ? battery3Energy : 0);
+
+		const sameReading = (a: number, b: number) => Math.abs(a - b) < 0.5;
+		const duplicateBank =
+			batteryCount >= 2 &&
+			sameReading(batteryPower, battery2Power) &&
+			(batteryCount < 3 || sameReading(batteryPower, battery3Power));
+		if (duplicateBank && batteryTotalEnergy > 0) {
+			const bank = batteryPower;
+			batteryPower = bank * (batteryEnergy / batteryTotalEnergy);
+			battery2Power = bank * (battery2Energy / batteryTotalEnergy);
+			if (batteryCount === 3) {
+				battery3Power = bank * (battery3Energy / batteryTotalEnergy);
+			}
+			batteryPowerTotal = bank;
+		}
 
 		if (
 			config.show_battery ||
