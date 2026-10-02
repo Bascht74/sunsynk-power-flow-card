@@ -80,7 +80,7 @@ const oneBattery = (
 	const iconX = x + iconSize / 6;
 	return svg`
 		<g style="cursor: pointer;" @click=${onClick}>
-			<text x="${cx}" y="${iconY + 4}" class="st3" fill="${colour}">
+			<text x="${cx}" y="${iconY + 3}" class="st3" fill="${colour}">
 				${socText}
 			</text>
 			<svg
@@ -312,19 +312,19 @@ export const renderBattery3Row = (
 								return svg`
 									<g id="battery_pack_readings">
 										<rect
-											x="318"
-											y="316"
-											width="186"
-											height="56"
+											x="292"
+											y="320.75"
+											width="170"
+											height="50"
 											rx="4.5"
 											ry="4.5"
 											fill="none"
 											stroke="${packs[0].colour}"
 											pointer-events="all"
 										/>
-										<text x="411" y="332" class="st3 st8" fill="${packs[0].colour}">${volts}</text>
-										<text x="411" y="348" class="st3 st8" fill="${packs[0].colour}">${amps}</text>
-										<text x="411" y="364" class="st3 st8" fill="${packs[0].colour}">${temps}</text>
+										<text x="377" y="329.5" class="st3 st8" fill="${packs[0].colour}">${volts}</text>
+										<text x="377" y="345.75" class="st3 st8" fill="${packs[0].colour}">${amps}</text>
+										<text x="377" y="362" class="st3 st8" fill="${packs[0].colour}">${temps}</text>
 									</g>
 								`;
 							})()}
