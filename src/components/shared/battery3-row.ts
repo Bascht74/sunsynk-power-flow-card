@@ -240,7 +240,7 @@ export const renderBattery3Row = (
 					? svg`
 							<g id="battery_total_power_three">
 								<rect
-									x="84.85"
+									x="84.08"
 									y="265"
 									width="70"
 									height="30"
@@ -251,7 +251,7 @@ export const renderBattery3Row = (
 									pointer-events="all"
 								/>
 								<text
-									x="118.85"
+									x="118.08"
 									y="282"
 									class="${data.largeFont !== true ? 'st14' : 'st4'} st8"
 									fill="${data.batteryColour}"
