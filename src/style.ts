@@ -50,6 +50,11 @@ export const styles: CSSResultGroup = css`
 	:host([phone]) #aux1-flow {
 		display: none;
 	}
+	:host([phone]) #battery_pack_readings {
+		transform-box: fill-box;
+		transform-origin: 0 0;
+		transform: translate(-150px, 108px);
+	}
 
 	.card {
 		border-radius: var(--ha-card-border-radius, 10px);
