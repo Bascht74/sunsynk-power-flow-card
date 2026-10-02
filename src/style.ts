@@ -11,6 +11,24 @@ export const styles: CSSResultGroup = css`
 		padding: 5px;
 	}
 
+	.flow-frame {
+		position: relative;
+		overflow: hidden;
+		container-type: inline-size;
+	}
+
+	.flow-frame > svg {
+		position: absolute;
+		top: 0;
+		left: 0;
+		transform-origin: top left;
+		transform: scale(calc(100cqw / var(--flow-w)));
+	}
+
+	.flow-frame foreignObject > div {
+		position: relative !important;
+	}
+
 	.card {
 		border-radius: var(--ha-card-border-radius, 10px);
 		box-shadow: var(

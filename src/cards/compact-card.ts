@@ -47,14 +47,14 @@ export const compactCard = (
 			<div class="container card">
 				${titleTemplate}
 				<div
-					style="width: ${frameWidth}; aspect-ratio: ${viewW} / ${viewH}; margin-inline: auto;"
+					class="flow-frame"
+					style="width: ${frameWidth}; aspect-ratio: ${viewW} / ${viewH}; margin-inline: auto; --flow-w: ${viewW}px;"
 				>
 					<svg
 						viewBox="${viewX} ${viewY} ${viewW} ${viewH}"
 						preserveAspectRatio="xMidYMid meet"
-						height="100%"
-						width="100%"
-						style="display: block;"
+						height="${viewH}"
+						width="${viewW}"
 						xmlns="http://www.w3.org/2000/svg"
 						xmlns:xlink="http://www.w3.org/1999/xlink"
 					>
