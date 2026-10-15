@@ -41,7 +41,7 @@ export class Utils {
 		const langFromHass: string | undefined =
 			hass?.selectedLanguage || hass?.locale?.language || hass?.language;
 
-		let locale: string | undefined = undefined;
+		let locale: string | undefined;
 		let useGrouping = true;
 
 		switch (nf) {
@@ -157,6 +157,8 @@ export class Utils {
 	 * Entities come from the card config. Missing or placeholder values
 	 * are left out, so another installation does not get a broken link.
 	 * The window is local midnight yesterday through now.
+	 * back=1 makes the history page show a back arrow, so a dashboard
+	 * without a sidebar (kiosk) still has a way back to the card.
 	 */
 	static historyPath(ids: Array<string | undefined | null>): string {
 		const entities = Utils.usableEntities(ids);
@@ -169,6 +171,7 @@ export class Utils {
 		start.setHours(0, 0, 0, 0);
 		const params = new URLSearchParams();
 		params.set('entity_id', entities.join(','));
+		params.set('back', '1');
 		params.set('start_date', start.toISOString());
 		params.set('end_date', end.toISOString());
 		return `/history?${params.toString()}`;
